@@ -48,8 +48,8 @@ def loss(net):
 
     return np.sum(loss)/numRecords
 
-
-def build(hlayer, epochs=350):
+# 350
+def build(hlayer, epochs=3050):
     W1 = np.random.randn(2, hlayer)
     B1 = np.zeros((1, hlayer))
     W2 = np.random.randn(hlayer, 2)
@@ -95,7 +95,7 @@ def build(hlayer, epochs=350):
 
 
 if __name__ == "__main__":
-    X, Y = make_moons(200, noise=0.2)
+    X, Y = make_moons(700,noise=0.3, random_state=0)
     numRecords = len(X)
 
     net, lossFn = build(3)
