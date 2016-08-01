@@ -101,8 +101,12 @@ if __name__ == "__main__":
     net, lossFn = build(3)
 
     plt.subplot(211)
+    plt.title("Boundary Classification")
     plt_decision_boundary(lambda x: predict(x, net))
 
     plt.subplot(212)
+    plt.ylabel("Error")
+    plt.xlabel("Epochs")
+    plt.title("Error Functions")
     plt.plot(lossFn[:, 0], lossFn[:, 1])
     plt.show()
