@@ -19,7 +19,7 @@ def train(boards):
             counter += 1
             # Check if the match is won/draw
             # if nextMove[i] not in visited:
-                # stack = np.append(stack, [nextMove[i]], axis=0)
+            stack = np.append(stack, [nextMove[i]], axis=0)
                 # break
 
         if counter == len(nextMove):

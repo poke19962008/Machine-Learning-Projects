@@ -22,11 +22,14 @@ def combinations():
 
 
 def nextStates(initState, player):
-    states = []
+    states = np.empty((0, 9), int)
     for i in xrange(0, 9):
         if initState[i] == 0:
             x = np.array(initState)
             o = np.array(initState)
             x[i], o[i] = 1, -1
-            states.append(x) if player == 'x' else states.append(o)
+            if player == 'x':
+                states = np.append(states, [x], axis=0)
+            else:
+                states = np.append(states, [o], axis=0)
     return np.array(states)
