@@ -3,30 +3,41 @@ import board
 
 def train(boards):
     initState = np.zeros(9)
-    player = 'o'
-    stack = np.array([initState])
-    visited = np.empty((0, 9), int)
+    player = 'x'
+    xStack = np.array([initState])
+    oStack = np.array([initState])
 
-    while len(stack):
-        curState = stack[len(stack)-1]
+    parent = np.empty((1, 9))
+    parent[:] = np.nan
+    child = [[initState]]
+
+    while True:
+        if player == "x":
+            curState = xStack[len(xStack)-1]
+            xStack = np.delete(xStack, len(xStack)-1, axis=0)
+        else:
+            curState = oStack[len(oStack)-1]
+            oStack = np.delete(oStack, len(oStack)-1, axis=0)
         player = 'o' if player == 'x' else 'x'
-        nextMove = board.nextStates(curState, player)
-        visited = np.append(visited, [curState], axis=0)
-        # print curState
 
-        counter = 0
-        for i in xrange(0, len(nextMove)):
-            counter += 1
-            # Check if the match is won/draw
-            # if nextMove[i] not in visited:
-            stack = np.append(stack, [nextMove[i]], axis=0)
-                # break
+        for i in xrange(0, len(child)):
+            find = np.where(np.all(curState == child[i], axis=1))
+            if len(find[0]):
+                pInd = i
+                break
 
-        if counter == len(nextMove):
-            np.delete(stack, 0)
-
+        print parent[pInd], curState, player
+        if not board.hasEnd(curState)[0]:
+            nextMove = board.nextStates(curState, 'o' if player == 'x' else 'x')
+            parent = np.append(parent, [curState], axis=0)
+            child.append(nextMove)
+            if player == "x":
+                xStack = np.append(xStack, nextMove, axis=0)
+            else:
+                oStack = np.append(oStack, nextMove, axis=0)
+        else:
+            print "----------------END----------------"
 
 if __name__ == '__main__':
     boards = board.combinations()
     train(board)
-    # board.hasWin([1, 1, 1, -1, -1, 0, 0, 0, 0])

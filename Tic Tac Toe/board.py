@@ -18,7 +18,30 @@ def combinations():
         board.append(np.array([S_x, S_o, 0.5]))
     return np.array(board)
 
-# def hasWin(state):
+
+def hasEnd(state):
+    state = np.reshape(state, (3, 3))
+    for i in xrange(0, 3):
+        v = np.sum(state, axis=0)
+        h = np.sum(state, axis=1)
+
+        if (3 in v) or (3 in h):
+            return (True, 'x')
+        elif (-3 in v) or (-3 in h):
+            return (True, 'o')
+    d1 = state[0][0] + state[1][1] + state[2][2]
+    d2 = state[0][2] + state[1][1] + state[2][0]
+
+    if (d1 == 3) or (d2 == 3):
+        return (True, 'x')
+    elif (d1 == -3) or (d2 == -3):
+        return (True, 'o')
+
+    zeroes = np.where(state == 0)
+    if (not len(zeroes[0])) and (not len(zeroes[1])):
+        return (True, 'xo')
+    else:
+        return (False, np.nan)
 
 
 def nextStates(initState, player):
