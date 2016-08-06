@@ -18,16 +18,15 @@ def combinations():
         board.append(np.array([S_x, S_o, 0.5]))
     return np.array(board)
 
-def hasWin(state)
+# def hasWin(state):
 
-def nextStates(initState):
+
+def nextStates(initState, player):
     states = []
     for i in xrange(0, 9):
         if initState[i] == 0:
             x = np.array(initState)
             o = np.array(initState)
             x[i], o[i] = 1, -1
-
-            states.append(x)
-            states.append(o)
+            states.append(x) if player == 'x' else states.append(o)
     return np.array(states)
