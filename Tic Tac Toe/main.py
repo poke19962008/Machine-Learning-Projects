@@ -11,6 +11,10 @@ def train(boards):
     parent[:] = np.nan
     child = [[initState]]
 
+    path = np.array([initState])
+    paths = []
+    hasEnd = False
+
     while True:
         if player == "x":
             curState = xStack[len(xStack)-1]
@@ -26,7 +30,18 @@ def train(boards):
                 pInd = i
                 break
 
-        print parent[pInd], curState, player
+        if hasEnd:
+            hasEnd = False
+            spliceInd = -1
+            for i in xrange(0, len(paths)):
+                spliceInd = np.where(np.all(parent[pInd] == paths[i], axis=1))
+                if len(spliceInd[0]):
+                    spliceInd = spliceInd[0][0]
+                    break
+            path = np.delete(path, np.s_[spliceInd+1::], 0)
+
+        path = np.append(path, [curState], axis=0)
+        # print parent[pInd], curState, player
         if not board.hasEnd(curState)[0]:
             nextMove = board.nextStates(curState, 'o' if player == 'x' else 'x')
             parent = np.append(parent, [curState], axis=0)
@@ -36,6 +51,10 @@ def train(boards):
             else:
                 oStack = np.append(oStack, nextMove, axis=0)
         else:
+            hasEnd = True
+            paths.append(path)
+            # path = np.delete(path, (0), axis=0)
+            print path
             print "----------------END----------------"
 
 if __name__ == '__main__':
