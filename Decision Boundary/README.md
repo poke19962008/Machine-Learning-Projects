@@ -10,7 +10,7 @@ It consist of 3 layered Neural Network. One inpult layer with 2 node for x and y
 
 ## Working
 
-Have used `hyperbolic tangent` as the activation function for the hidden layer `Z1` and `softmax` for converting the raw scores from the hidden layer to probabilities. Weight adjustments have been made by minimising `Mean Square Error` of the neural network by using `Batch Gradient Descent` algorithm with constant learning rate. To calculate the gradients I have used `Back Propogation` algorithm.
+Have used `hyperbolic tangent` as the activation function for the hidden layer `Z1` and `softmax` for converting the raw scores from the hidden layer to probabilities. Weight adjustments have been made by minimising `Mean Square Error` of the neural network by using `Batch Gradient Descent` algorithm with constant learning rate. For the weight fixing I have used `Back Propogation` algorithm.
 
 ![alt text](https://github.com/poke19962008/Neural-Network-Projects/blob/master/Decision%20Boundary/res/CodeCogsEqn.png?raw=true "LaTeX")
 
