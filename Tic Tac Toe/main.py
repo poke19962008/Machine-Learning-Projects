@@ -1,6 +1,16 @@
 import numpy as np
 import board
 
+alpha = 0.9
+discountFact = 0.85
+reward = {
+    'win': 1,
+    'loss': -1,
+    'draw': -1
+}
+generation = 0
+evolutions = 0
+
 def train(boards):
     initState = np.zeros(9)
     player = 'x'
@@ -41,7 +51,6 @@ def train(boards):
             path = np.delete(path, np.s_[spliceInd+1::], 0)
 
         path = np.append(path, [curState], axis=0)
-        # print parent[pInd], curState, player
         if not board.hasEnd(curState)[0]:
             nextMove = board.nextStates(curState, 'o' if player == 'x' else 'x')
             parent = np.append(parent, [curState], axis=0)
@@ -53,7 +62,6 @@ def train(boards):
         else:
             hasEnd = True
             paths.append(path)
-            # path = np.delete(path, (0), axis=0)
             print path
             print "----------------END----------------"
 

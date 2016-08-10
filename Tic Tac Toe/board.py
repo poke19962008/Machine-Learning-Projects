@@ -15,7 +15,7 @@ def combinations():
             elif c%3 == 2:
                 S_o += np.power(0.5, j)
             c /= 3
-        board.append(np.array([S_x, S_o, 0.5]))
+        board.append(np.array([[S_x, S_o], 0.5]))
     return np.array(board)
 
 
