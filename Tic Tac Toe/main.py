@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import board
 
 discountFact = 0.85
@@ -14,9 +16,15 @@ generation = {
     'total': 0
 }
 evolutions = 0
+temperture = 200
 
-def tdLearn(path, hasWin, boards):
-    global discountFact, stepFactor, rewards, generation, evolutions
+boards = None
+
+# fig = plt.figure()
+# stateProbFig = fig.add_subplot(1,1,1)
+
+def tdLearn(path, hasWin):
+    global discountFact, stepFactor, rewards, generation, evolutions, boards
 
     if hasWin[1] == 'x':
         reward = rewards['win']
@@ -27,24 +35,66 @@ def tdLearn(path, hasWin, boards):
 
     if not generation['total'] % 10:
         if generation['success'] < 2:
-            stepFactor *= 0.85
+            stepFactor *= stepFactor
         else:
-            stepFactor /= 0.85
+            stepFactor /= stepFactor
         generation['success'] = 0
         generation['failed'] = 0
 
-    for i in xrange(7, -1, -1):
-        bIndex = board.getBoardIndex(path[i])
+    bIndex = board.getBoardIndex(path[-1])
+    for i in xrange(0, len(boards)):
+        if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
+            boards[i][1] = 1
+            boards[i][2] = rewards['win']
+            print path[-1], boards[i][1]
+
+    for j in xrange(len(path)-2, 0, -1):
+        bIndex = board.getBoardIndex(path[j])
         for i in xrange(0, len(boards)):
             if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
-                P = boards[i][1]
-                boards[i][1] += stepFactor*(discountFact*Vprev + P)
-                print boards[i]
+                V = boards[i][2]
+                boards[i][2] += stepFactor*(discountFact*Vprev + V)
+
+                # getVsi(board.nextStates(path[i]))
+                boards[i][1] = getPolicy(boards[i][2], path[j])
+
+                print path[j], boards[i][1]
                 break
 
     generation['total'] += 1
 
-def train(boards):
+def getPolicy(V, state):
+    global temperture
+    return np.exp(V/temperture) / getSumVsi(state)
+
+def getSumVsi(states):
+    afterStates = []
+    global temperture
+
+    x = board.nextStates(states, 'x')
+    o = board.nextStates(states, 'o')
+
+    if len(x) and len(o):
+        states = np.concatenate((x, o), axis=0)
+    elif len(x):
+        states = x
+    elif len(o):
+        states = o
+
+    for i  in xrange(0, len(states)):
+        bIndex = board.getBoardIndex(states[i])
+
+        for j in xrange(len(boards)):
+            if len(np.where(np.all(boards[j][0] == bIndex, axis=0))[0]):
+                afterStates.append(np.exp(boards[j][2]/temperture))
+    return np.sum(afterStates)
+
+# def animate(i):
+#     stateProbFig.clear()
+
+    # stateProbFig
+
+def train():
     initState = np.zeros(9)
     player = 'x'
     xStack = np.array([initState])
@@ -97,9 +147,10 @@ def train(boards):
         else:
             hasEnd = True
             paths.append(path)
-            tdLearn(path, hasWin, boards)
+            tdLearn(path, hasWin)
             print "----------------END----------------"
 
 if __name__ == '__main__':
+    # animation.FuncAnimation(fig, animate, interval=100)
     boards = board.combinations()
-    train(boards)
+    train()
