@@ -1,8 +1,19 @@
-import numpy as np
 '''
-    X: 1
-    O: -1
-    b: 0
+Helper Methods for Board Utilities
+Conventions:
+X: 1
+O: -1
+blank: 0
+Boards Representation:
+[[S_x(S), S_o(S)], pi(S)n, V(s), [pi(S)1, pi(S)2 ... pi(S)n]]
+State Representation:
+S_x(S) = sum((0.5^i)*(1 if S[i] == 'x' else 0))
+S_0(S) = sum((0.5^i)*(1 if S[i] == 'o' else 0))
+'''
+import numpy as np
+
+'''
+ Return the initial Stage of board
 '''
 def combinations():
     board = []
@@ -18,7 +29,9 @@ def combinations():
         board.append(np.array([np.array([S_x, S_o]), 0.5, 0, []]))
     return np.array(board)
 
-
+'''
+ Checks if Game has Ended
+'''
 def hasEnd(state):
     state = np.reshape(state, (3, 3))
     for i in xrange(0, 3):
@@ -43,7 +56,9 @@ def hasEnd(state):
     else:
         return (False, np.nan)
 
-
+'''
+ Returns the Next States for a particular player
+'''
 def nextStates(initState, player):
     states = np.empty((0, 9), int)
     for i in xrange(0, 9):
@@ -57,6 +72,9 @@ def nextStates(initState, player):
                 states = np.append(states, [o], axis=0)
     return np.array(states)
 
+'''
+ Converts simple 1XN state to 1X2 S_x, S_o format
+'''
 def getBoardIndex(state):
     S_o = S_x = 0
     for i in xrange(0, 9):

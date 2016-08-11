@@ -2,6 +2,13 @@ import signal, sys
 import numpy as np
 import board
 
+'''
+ Constants Used
+ discountFact: Discount Factor for Temporal Difference Learning Algorithm
+ stepFactor: Step Size
+ rewards: reward points for the win, loss and draw match
+ temperture: Temperature Policy Selection using Boltzman Distribution
+'''
 discountFact = 0.85
 stepFactor = 0.25
 rewards = {
@@ -9,19 +16,25 @@ rewards = {
     'loss': -1,
     'draw': -1
 }
-generation = {
-    'success': 0,
-    'failed': 0,
-    'total': 0
-}
-evolutions = 0
 temperture = 200
 
+'''
+ generation: Each generation consist of 10 epochs and stores the total succes and failures
+ epochs: Number of games computed
+ boards: Containes the board configs
+'''
+generation = {
+'success': 0,
+'failed': 0,
+}
+epochs = 0
 boards = None
 
-
+'''
+ Temporal Difference Learning
+'''
 def tdLearn(path, hasWin):
-    global discountFact, stepFactor, rewards, generation, evolutions, boards
+    global discountFact, stepFactor, rewards, generation, boards
 
     if hasWin[1] == 'x':
         reward = rewards['win']
@@ -30,7 +43,8 @@ def tdLearn(path, hasWin):
         reward = rewards['loss']
         Vprev = reward
 
-    if not generation['total'] % 10:
+    # Evolve if and only if particular generation satisfy 1/5 rule
+    if not epochs % 10:
         if generation['success'] < 2:
             stepFactor *= stepFactor
         else:
@@ -38,6 +52,7 @@ def tdLearn(path, hasWin):
         generation['success'] = 0
         generation['failed'] = 0
 
+    # Set pi(target) = 1 and V(target) = reward['win']
     bIndex = board.getBoardIndex(path[-1])
     for i in xrange(0, len(boards)):
         if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
@@ -49,21 +64,31 @@ def tdLearn(path, hasWin):
         bIndex = board.getBoardIndex(path[j])
         for i in xrange(0, len(boards)):
             if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
+                # Update V(S)
                 V = boards[i][2]
                 boards[i][2] += stepFactor*(discountFact*Vprev + V)
 
+                # Update pi(S)
                 boards[i][1] = getPolicy(boards[i][2], path[j])
                 boards[i][3].append(boards[i][1])
 
                 print path[j], boards[i][1]
                 break
 
-    generation['total'] += 1
+    epochs += 1
 
+'''
+ Get Policy on the basis of Boltzman Distribution
+ pi(S) = e^(V(S)/T)/sum(e^(V(S_i)/T))
+'''
 def getPolicy(V, state):
     global temperture
     return np.exp(V/temperture) / getSumVsi(state)
 
+
+'''
+ Helper Fuction for getPolicy()
+'''
 def getSumVsi(states):
     afterStates = []
     global temperture
@@ -86,6 +111,10 @@ def getSumVsi(states):
                 afterStates.append(np.exp(boards[j][2]/temperture))
     return np.sum(afterStates)
 
+
+'''
+ Starts the Learning of each possible path
+'''
 def train():
     initState = np.zeros(9)
     player = 'x'
@@ -142,6 +171,9 @@ def train():
             tdLearn(path, hasWin)
             print "----------------END----------------"
 
+'''
+ Save Board Before Termination
+'''
 def saveBoards(signal, frame):
     print "\n\nSaving Trained Datasets"
     f = file("trained.bin","wb")
