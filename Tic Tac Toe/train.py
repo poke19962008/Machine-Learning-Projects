@@ -34,7 +34,7 @@ boards = None
  Temporal Difference Learning
 '''
 def tdLearn(path, hasWin):
-    global discountFact, stepFactor, rewards, generation, boards
+    global discountFact, stepFactor, rewards, generation, boards, epochs
 
     if hasWin[1] == 'x':
         reward = rewards['win']
