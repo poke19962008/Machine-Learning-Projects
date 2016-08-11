@@ -1,6 +1,5 @@
+import signal, sys
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import board
 
 discountFact = 0.85
@@ -20,8 +19,6 @@ temperture = 200
 
 boards = None
 
-# fig = plt.figure()
-# stateProbFig = fig.add_subplot(1,1,1)
 
 def tdLearn(path, hasWin):
     global discountFact, stepFactor, rewards, generation, evolutions, boards
@@ -55,8 +52,8 @@ def tdLearn(path, hasWin):
                 V = boards[i][2]
                 boards[i][2] += stepFactor*(discountFact*Vprev + V)
 
-                # getVsi(board.nextStates(path[i]))
                 boards[i][1] = getPolicy(boards[i][2], path[j])
+                boards[i][3].append(boards[i][1])
 
                 print path[j], boards[i][1]
                 break
@@ -88,11 +85,6 @@ def getSumVsi(states):
             if len(np.where(np.all(boards[j][0] == bIndex, axis=0))[0]):
                 afterStates.append(np.exp(boards[j][2]/temperture))
     return np.sum(afterStates)
-
-# def animate(i):
-#     stateProbFig.clear()
-
-    # stateProbFig
 
 def train():
     initState = np.zeros(9)
@@ -150,7 +142,22 @@ def train():
             tdLearn(path, hasWin)
             print "----------------END----------------"
 
+def saveBoards(signal, frame):
+    print "\n\nSaving Trained Datasets"
+    f = file("trained.bin","wb")
+    np.save(f, boards)
+    print "[SUCCESS] Saved"
+
+    sys.exit(0)
+
 if __name__ == '__main__':
-    # animation.FuncAnimation(fig, animate, interval=100)
+
+    signal.signal(signal.SIGINT, saveBoards)
+
+    print  "Loading boards..."
     boards = board.combinations()
+    print  "Loaded ", len(boards)
+
+    print "\n\nStarted Training"
+    print  "Press ctrl+c to close and save the trained dataset"
     train()
