@@ -15,7 +15,7 @@ def combinations():
             elif c%3 == 2:
                 S_o += np.power(0.5, j)
             c /= 3
-        board.append(np.array([[S_x, S_o], 0.5]))
+        board.append(np.array([np.array([S_x, S_o]), 0.5]))
     return np.array(board)
 
 
@@ -56,3 +56,13 @@ def nextStates(initState, player):
             else:
                 states = np.append(states, [o], axis=0)
     return np.array(states)
+
+def getBoardIndex(state):
+    S_o = S_x = 0
+    for i in xrange(0, 9):
+
+        if state[i] == 1.0:
+            S_x += np.power(0.5, i)
+        elif state[i] == -1.0:
+            S_o += np.power(0.5, i)
+    return np.array([S_x, S_o])

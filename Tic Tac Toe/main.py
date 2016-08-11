@@ -1,15 +1,48 @@
 import numpy as np
 import board
 
-alpha = 0.9
 discountFact = 0.85
-reward = {
+stepFactor = 0.25
+rewards = {
     'win': 1,
     'loss': -1,
     'draw': -1
 }
-generation = 0
+generation = {
+    'success': 0,
+    'failed': 0,
+    'total': 0
+}
 evolutions = 0
+
+def tdLearn(path, hasWin, boards):
+    global discountFact, stepFactor, rewards, generation, evolutions
+
+    if hasWin[1] == 'x':
+        reward = rewards['win']
+        Vprev = reward
+    else:
+        reward = rewards['loss']
+        Vprev = reward
+
+    if not generation['total'] % 10:
+        if generation['success'] < 2:
+            stepFactor *= 0.85
+        else:
+            stepFactor /= 0.85
+        generation['success'] = 0
+        generation['failed'] = 0
+
+    for i in xrange(7, -1, -1):
+        bIndex = board.getBoardIndex(path[i])
+        for i in xrange(0, len(boards)):
+            if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
+                P = boards[i][1]
+                boards[i][1] += stepFactor*(discountFact*Vprev + P)
+                print boards[i]
+                break
+
+    generation['total'] += 1
 
 def train(boards):
     initState = np.zeros(9)
@@ -51,7 +84,9 @@ def train(boards):
             path = np.delete(path, np.s_[spliceInd+1::], 0)
 
         path = np.append(path, [curState], axis=0)
-        if not board.hasEnd(curState)[0]:
+
+        hasWin = board.hasEnd(curState)
+        if not hasWin[0]:
             nextMove = board.nextStates(curState, 'o' if player == 'x' else 'x')
             parent = np.append(parent, [curState], axis=0)
             child.append(nextMove)
@@ -62,9 +97,9 @@ def train(boards):
         else:
             hasEnd = True
             paths.append(path)
-            print path
+            tdLearn(path, hasWin, boards)
             print "----------------END----------------"
 
 if __name__ == '__main__':
     boards = board.combinations()
-    train(board)
+    train(boards)
