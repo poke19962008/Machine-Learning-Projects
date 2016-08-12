@@ -13,8 +13,8 @@ discountFact = 0.85
 stepFactor = 0.25
 rewards = {
     'win': 1,
-    'loss': -1,
-    'draw': -1
+    'loss': -0.5,
+    'draw': -0.5
 }
 temperture = 1
 
@@ -39,9 +39,9 @@ def tdLearn(path, hasWin):
     # Evolve if and only if particular generation satisfy 1/5 rule
     if not epochs % 10:
         if generation['success'] < 2:
-            stepFactor *= 0.85
+            stepFactor += (1-stepFactor)/2
         else:
-            stepFactor /= 0.85
+            stepFactor -= (stepFactor)/2
         generation['success'] = 0
         generation['failed'] = 0
 
