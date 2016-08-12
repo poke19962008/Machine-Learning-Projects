@@ -5,10 +5,6 @@ X: 1
 O: -1
 blank: 0
 Boards Representation:
-[[S_x(S), S_o(S)], pi(S)n, V(s), [pi(S)1, pi(S)2 ... pi(S)n]]
-State Representation:
-S_x(S) = sum((0.5^i)*(1 if S[i] == 'x' else 0))
-S_0(S) = sum((0.5^i)*(1 if S[i] == 'o' else 0))
 '''
 import numpy as np
 
@@ -19,14 +15,24 @@ def combinations():
     board = []
     for i in xrange(0, 19683):
         c = i
-        S_x = S_o = 0
+        state = []
         for j in xrange(0, 9):
             if c%3 == 1:
-                S_x += np.power(0.5, j)
+                state.append(1)
             elif c%3 == 2:
-                S_o += np.power(0.5, j)
+                state.append(-1)
+            else:
+                state.append(0)
             c /= 3
-        board.append(np.array([np.array([S_x, S_o]), 0.5, 0, []]))
+
+        gameOver = hasEnd(state)
+        if gameOver[0]:
+            if gameOver[1] == 'x':
+                board.append(np.array([state, 1, []]))
+            else:
+                board.append(np.array([state, -1, []]))
+        else:
+            board.append(np.array([state, 0, []]))
     return np.array(board)
 
 '''
@@ -75,12 +81,12 @@ def nextStates(initState, player):
 '''
  Converts simple 1XN state to 1X2 S_x, S_o format
 '''
-def getBoardIndex(state):
-    S_o = S_x = 0
-    for i in xrange(0, 9):
-
-        if state[i] == 1.0:
-            S_x += np.power(0.5, i)
-        elif state[i] == -1.0:
-            S_o += np.power(0.5, i)
-    return np.array([S_x, S_o])
+# def getBoardIndex(state):
+#     S_o = S_x = 0
+#     for i in xrange(0, 9):
+#
+#         if state[i] == 1.0:
+#             S_x += np.power(0.5, i)
+#         elif state[i] == -1.0:
+#             S_o += np.power(0.5, i)
+#     return np.array([S_x, S_o])

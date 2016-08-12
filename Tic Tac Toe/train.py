@@ -16,7 +16,7 @@ rewards = {
     'loss': -1,
     'draw': -1
 }
-temperture = 200
+temperture = 1
 
 '''
  generation: Each generation consist of 10 epochs and stores the total succes and failures
@@ -24,8 +24,8 @@ temperture = 200
  boards: Containes the board configs
 '''
 generation = {
-'success': 0,
-'failed': 0,
+    'success': 0,
+    'failed': 0,
 }
 epochs = 0
 boards = None
@@ -36,43 +36,35 @@ boards = None
 def tdLearn(path, hasWin):
     global discountFact, stepFactor, rewards, generation, boards, epochs
 
-    if hasWin[1] == 'x':
-        reward = rewards['win']
-        Vprev = reward
-    else:
-        reward = rewards['loss']
-        Vprev = reward
-
     # Evolve if and only if particular generation satisfy 1/5 rule
     if not epochs % 10:
         if generation['success'] < 2:
-            stepFactor *= stepFactor
+            stepFactor *= 0.85
         else:
-            stepFactor /= stepFactor
+            stepFactor /= 0.85
         generation['success'] = 0
         generation['failed'] = 0
 
-    # Set pi(target) = 1 and V(target) = reward['win']
-    bIndex = board.getBoardIndex(path[-1])
-    for i in xrange(0, len(boards)):
-        if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
-            boards[i][1] = 1
-            boards[i][2] = rewards['win']
-            print path[-1], boards[i][1]
+    if hasWin[1] == 'x':
+        reward = rewards['win']
+        Vprev = reward
+        generation['success'] += 1
+    else:
+        reward = rewards['loss']
+        Vprev = reward
+        generation['failed'] += 1
 
     for j in xrange(len(path)-2, 0, -1):
-        bIndex = board.getBoardIndex(path[j])
         for i in xrange(0, len(boards)):
-            if len(np.where(np.all(boards[i][0] == bIndex, axis=0))[0]):
+            if len(np.where(np.all(boards[i][0] == path[j], axis=0))[0]):
+
                 # Update V(S)
-                V = boards[i][2]
-                boards[i][2] += stepFactor*(discountFact*Vprev + V)
+                V = boards[i][1]
+                boards[i][1] += stepFactor*(discountFact*Vprev - V)
 
-                # Update pi(S)
-                boards[i][1] = getPolicy(boards[i][2], path[j])
-                boards[i][3].append(boards[i][1])
+                boards[i][2].append(boards[i][1])
 
-                print path[j], boards[i][1]
+                print path[j], boards[i][1], stepFactor, hasWin[1]
                 break
 
     epochs += 1
@@ -81,35 +73,35 @@ def tdLearn(path, hasWin):
  Get Policy on the basis of Boltzman Distribution
  pi(S) = e^(V(S)/T)/sum(e^(V(S_i)/T))
 '''
-def getPolicy(V, state):
-    global temperture
-    return np.exp(V/temperture) / getSumVsi(state)
+# def getPolicy(V, state):
+#     global temperture
+#     return np.exp(V/temperture) / getSumVsi(state)
 
 
 '''
  Helper Fuction for getPolicy()
 '''
-def getSumVsi(states):
-    afterStates = []
-    global temperture
-
-    x = board.nextStates(states, 'x')
-    o = board.nextStates(states, 'o')
-
-    if len(x) and len(o):
-        states = np.concatenate((x, o), axis=0)
-    elif len(x):
-        states = x
-    elif len(o):
-        states = o
-
-    for i  in xrange(0, len(states)):
-        bIndex = board.getBoardIndex(states[i])
-
-        for j in xrange(len(boards)):
-            if len(np.where(np.all(boards[j][0] == bIndex, axis=0))[0]):
-                afterStates.append(np.exp(boards[j][2]/temperture))
-    return np.sum(afterStates)
+# def getSumVsi(states):
+#     afterStates = []
+#     global temperture
+#
+#     x = board.nextStates(states, 'x')
+#     o = board.nextStates(states, 'o')
+#
+#     if len(x) and len(o):
+#         states = np.concatenate((x, o), axis=0)
+#     elif len(x):
+#         states = x
+#     elif len(o):
+#         states = o
+#
+#     for i  in xrange(0, len(states)):
+#         bIndex = board.getBoardIndex(states[i])
+#
+#         for j in xrange(len(boards)):
+#             if len(np.where(np.all(boards[j][0] == bIndex, axis=0))[0]):
+#                 afterStates.append(np.exp(boards[j][2]/temperture))
+#     return np.sum(afterStates)
 
 
 '''
@@ -188,7 +180,7 @@ if __name__ == '__main__':
 
     print  "Loading boards..."
     boards = board.combinations()
-    print  "Loaded ", len(boards)
+    print  "Loaded ", len(boards), "Boards"
 
     print "\n\nStarted Training"
     print  "Press ctrl+c to close and save the trained dataset"
