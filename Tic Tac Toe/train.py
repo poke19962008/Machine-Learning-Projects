@@ -123,9 +123,13 @@ def train():
 
     while True:
         if player == "x":
+            if not len(xStack):
+                break
             curState = xStack[len(xStack)-1]
             xStack = np.delete(xStack, len(xStack)-1, axis=0)
         else:
+            if not len(oStack):
+                break
             curState = oStack[len(oStack)-1]
             oStack = np.delete(oStack, len(oStack)-1, axis=0)
         player = 'o' if player == 'x' else 'x'
@@ -162,6 +166,7 @@ def train():
             paths.append(path)
             tdLearn(path, hasWin)
             print "----------------END----------------"
+    saveBoards(None, None)
 
 '''
  Save Board Before Termination
