@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 
-alpha = 0.1
-epochs = 150
-nHidden = 270
+alpha = 0.0001
+epochs = 20000
+nHidden = 50
 
 policy = []
 
@@ -73,7 +73,7 @@ def build(P):
             "B2": B2
         }
         loss = avgLoss(predOtp, P[:,1])
-        if not i%10:
+        if not i%100:
             print "Epoch=", i, "Loss(MSE)=", loss
         error.append([i, loss])
     error = np.array(error)
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     #
     # f = open("policy.bin", "wb")
     # np.save(f, np.array(policy))
-
+    #
     f = open("policy.bin", "rb")
     P = np.load(f)
     # model = build(P)
@@ -110,4 +110,5 @@ if __name__ == '__main__':
     with open('ann.pickle', 'rb') as handler:
         model = pickle.load(handler)
         for inp, otp in P:
-            print predict(model, inp), otp 
+            pred = predict(model, inp)[0]
+            print np.around(pred) - otp
