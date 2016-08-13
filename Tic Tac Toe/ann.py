@@ -1,9 +1,10 @@
 import board
 import numpy as np
+import matplotlib.pyplot as plt
 
 alpha = 0.1
-epochs = 1
-nHidden = 20
+epochs = 150
+nHidden = 270
 
 policy = []
 
@@ -28,24 +29,54 @@ def calcPolicy(V):
             print V[i][0], vAfterStates[piInd][0]
             policy.append([V[i][0], vAfterStates[piInd][0]])
 
+
+def avgLoss(predOtp, otp):
+    loss = np.square(predOtp - otp)
+    loss = np.sum(loss, axis=1)/9
+    return 0.5*np.sum(loss, axis=0)/len(otp)
+
 def build(P):
-    W1 = np.zeros((9, nHidden))
-    W2 = np.zeros((nHidden, 9))
+    error = []
+
+    W1 = np.random.randn(9, nHidden)
+    W2 = np.random.randn(nHidden, 9)
     B1 = np.zeros((1, nHidden))
     B2 = np.zeros((1, 9))
 
     ann = {}
 
     for i in xrange(epochs):
-        for inp, otp in P:
-            Z1 = inp.dot(W1) + B1
-            a1 = np.tanh(Z1)
-            Z2 = a1.dot(W2)  + B2
-            predOtp = np.tanh(Z2)
+        Z1 = P[:,0].dot(W1) + B1
+        a1 = np.tanh(Z1)
+        Z2 = a1.dot(W2)  + B2
+        predOtp = np.tanh(Z2)
 
-            
+        delta2 = predOtp
+        delta2 = predOtp - P[:,1]
+        delta1 = delta2.dot(W2.T) * (1 - np.power(a1, 2))
 
+        dW2 = (a1.T).dot(delta2)
+        dB2 = np.sum(delta2, axis=0, keepdims=True)
+        dW1 = (P[:,0].T).dot(delta1)
+        dB1 = np.sum(delta1, axis=0, keepdims=True)
 
+        W1 += -alpha*(dW1)
+        B1 += -alpha*(dB1)
+        W2 += -alpha*(dW2)
+        B2 += -alpha*(dB2)
+
+        ann = {
+            "W1": W1,
+            "B1": B1,
+            "W2": W2,
+            "B2": B2
+        }
+        loss = avgLoss(predOtp, P[:,1])
+        if not i%10:
+            print "Epoch=", i, "Loss(MSE)=", loss
+        error.append([i, loss])
+    error = np.array(error)
+    plt.plot(error[:,0], error[:,1])
     return ann
 
 
@@ -59,3 +90,5 @@ if __name__ == '__main__':
 
     f = open("policy.bin", "rb")
     build(np.load(f))
+
+    plt.show()
