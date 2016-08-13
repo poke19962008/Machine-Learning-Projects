@@ -1,6 +1,10 @@
 import board
 import numpy as np
 
+alpha = 0.1
+epochs = 1
+nHidden = 20
+
 policy = []
 
 def calcPolicy(V):
@@ -24,10 +28,34 @@ def calcPolicy(V):
             print V[i][0], vAfterStates[piInd][0]
             policy.append([V[i][0], vAfterStates[piInd][0]])
 
-if __name__ == '__main__':
-    f = open("trained.bin", "rb")
-    V = np.load(f)
-    calcPolicy(V)
+def build(P):
+    W1 = np.zeros((9, nHidden))
+    W2 = np.zeros((nHidden, 9))
+    B1 = np.zeros((1, nHidden))
+    B2 = np.zeros((1, 9))
 
-    f = open("policy.bin", "wb")
-    np.save(f, np.array(policy))
+    ann = {}
+
+    for i in xrange(epochs):
+        for inp, otp in P:
+            Z1 = inp.dot(W1) + B1
+            a1 = np.tanh(Z1)
+            Z2 = a1.dot(W2)  + B2
+            predOtp = np.tanh(Z2)
+
+            
+
+
+    return ann
+
+
+if __name__ == '__main__':
+    # f = open("trained.bin", "rb")
+    # V = np.load(f)
+    # calcPolicy(V)
+    #
+    # f = open("policy.bin", "wb")
+    # np.save(f, np.array(policy))
+
+    f = open("policy.bin", "rb")
+    build(np.load(f))
