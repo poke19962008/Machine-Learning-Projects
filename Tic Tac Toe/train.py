@@ -1,3 +1,4 @@
+from __future__ import division
 import signal, sys
 import numpy as np
 import board
@@ -9,24 +10,14 @@ import board
  rewards: reward points for the win, loss and draw match
  temperture: Temperature Policy Selection using Boltzman Distribution
 '''
-discountFact = 0.85
-stepFactor = 0.25
+discountFact = 0.9
+stepFactor = 0.09
 rewards = {
     'win': 1,
-    'loss': -0.5,
-    'draw': -0.5
+    'loss': 0,
+    'draw': 0.5
 }
-temperture = 1
 
-'''
- generation: Each generation consist of 10 epochs and stores the total succes and failures
- epochs: Number of games computed
- boards: Containes the board configs
-'''
-generation = {
-    'success': 0,
-    'failed': 0,
-}
 epochs = 0
 boards = None
 
@@ -35,28 +26,24 @@ boards = None
 '''
 def tdLearn(path, hasWin):
     global discountFact, stepFactor, rewards, generation, boards, epochs
-
-    # Evolve if and only if particular generation satisfy 1/5 rule
-    if not epochs % 10:
-        if generation['success'] < 2:
-            stepFactor += (1-stepFactor)/2
-        else:
-            stepFactor -= (stepFactor)/2
-        generation['success'] = 0
-        generation['failed'] = 0
+    stepFactor_ = stepFactor
 
     if hasWin[1] == 'x':
         reward = rewards['win']
-        Vprev = reward
-        generation['success'] += 1
-    else:
+    elif hasWin[1] == 'o':
         reward = rewards['loss']
-        Vprev = reward
-        generation['failed'] += 1
+    else:
+        reward = rewards['draw']
+    Vprev = reward
 
     for j in xrange(len(path)-2, 0, -1):
         for i in xrange(0, len(boards)):
             if len(np.where(np.all(boards[i][0] == path[j], axis=0))[0]):
+                stepFactor = len(boards[i][2])
+                if stepFactor == 0:
+                    stepFactor = 1
+                else:
+                    stepFactor = 1/stepFactor
 
                 # Update V(S)
                 V = boards[i][1]
@@ -68,40 +55,6 @@ def tdLearn(path, hasWin):
                 break
 
     epochs += 1
-
-'''
- Get Policy on the basis of Boltzman Distribution
- pi(S) = e^(V(S)/T)/sum(e^(V(S_i)/T))
-'''
-# def getPolicy(V, state):
-#     global temperture
-#     return np.exp(V/temperture) / getSumVsi(state)
-
-
-'''
- Helper Fuction for getPolicy()
-'''
-# def getSumVsi(states):
-#     afterStates = []
-#     global temperture
-#
-#     x = board.nextStates(states, 'x')
-#     o = board.nextStates(states, 'o')
-#
-#     if len(x) and len(o):
-#         states = np.concatenate((x, o), axis=0)
-#     elif len(x):
-#         states = x
-#     elif len(o):
-#         states = o
-#
-#     for i  in xrange(0, len(states)):
-#         bIndex = board.getBoardIndex(states[i])
-#
-#         for j in xrange(len(boards)):
-#             if len(np.where(np.all(boards[j][0] == bIndex, axis=0))[0]):
-#                 afterStates.append(np.exp(boards[j][2]/temperture))
-#     return np.sum(afterStates)
 
 
 '''

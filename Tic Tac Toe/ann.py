@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 
-alpha = 0.0001
-epochs = 20000
-nHidden = 50
+alpha = 0.00008
+epochs = 30000
+nHidden = 70
 
 policy = []
 
@@ -39,6 +39,10 @@ def avgLoss(predOtp, otp):
 def build(P):
     error = []
 
+    # with open('ann.pickle', 'rb') as handler:
+    #     model = pickle.load(handler)
+    #     W1, W2, B1, B2 = model["W1"], model["W2"], model["B1"], model["B2"]
+
     W1 = np.random.randn(9, nHidden)
     W2 = np.random.randn(nHidden, 9)
     B1 = np.zeros((1, nHidden))
@@ -51,6 +55,7 @@ def build(P):
         a1 = np.tanh(Z1)
         Z2 = a1.dot(W2)  + B2
         predOtp = np.tanh(Z2)
+        predOtp = np.around(predOtp)
 
         delta2 = predOtp
         delta2 = predOtp - P[:,1]
@@ -80,35 +85,17 @@ def build(P):
     plt.plot(error[:,0], error[:,1])
     return ann
 
-def predict(model, inp):
-    inp = np.array(inp)
-    W1, W2, B1, B2 = model["W1"], model["W2"], model["B1"], model["B2"]
-
-    Z1 = inp.dot(W1) + B1
-    a1 = np.tanh(Z1)
-    Z2 = a1.dot(W2)  + B2
-    predOtp = np.tanh(Z2)
-
-    return predOtp
-
 if __name__ == '__main__':
     # f = open("trained.bin", "rb")
     # V = np.load(f)
     # calcPolicy(V)
-    #
     # f = open("policy.bin", "wb")
     # np.save(f, np.array(policy))
-    #
+
     f = open("policy.bin", "rb")
     P = np.load(f)
-    # model = build(P)
-    # with open('ann.pickle', 'wb') as handle:
-    #     pickle.dump(model, handle)
+    model = build(P)
+    with open('ann.pickle', 'wb') as handle:
+        pickle.dump(model, handle)
 
-    # plt.show()
-
-    with open('ann.pickle', 'rb') as handler:
-        model = pickle.load(handler)
-        for inp, otp in P:
-            pred = predict(model, inp)[0]
-            print np.around(pred) - otp
+    plt.show()
