@@ -4,7 +4,8 @@ import numpy as np
 f = open('trained.bin', 'rb')
 V = np.load(f)
 
-samples = [[-1,  0,  0,  -1, -1, 0, 0,  1,  1]]
+samples = [[0,  0,  0,  1, 0, 0, 0,  0,  0],
+           [-1,  0,  0,  1, 1, 0, 0,  -1,  0]]
 
 for sample in samples:
     for v in V:

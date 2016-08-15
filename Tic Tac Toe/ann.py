@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 
-alpha = 0.00008
-epochs = 30000
+alpha = 0.0001
+epochs = 35000
 nHidden = 70
 
 policy = []
@@ -86,16 +86,16 @@ def build(P):
     return ann
 
 if __name__ == '__main__':
-    # f = open("trained.bin", "rb")
-    # V = np.load(f)
-    # calcPolicy(V)
-    # f = open("policy.bin", "wb")
-    # np.save(f, np.array(policy))
+    f = open("trained.bin", "rb")
+    V = np.load(f)
+    calcPolicy(V)
+    f = open("policy.bin", "wb")
+    np.save(f, np.array(policy))
 
-    f = open("policy.bin", "rb")
-    P = np.load(f)
-    model = build(P)
-    with open('ann.pickle', 'wb') as handle:
-        pickle.dump(model, handle)
-
-    plt.show()
+    # f = open("policy.bin", "rb")
+    # P = np.load(f)
+    # model = build(P)
+    # with open('ann.pickle', 'wb') as handle:
+    #     pickle.dump(model, handle)
+    #
+    # plt.show()

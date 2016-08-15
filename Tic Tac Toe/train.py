@@ -46,7 +46,6 @@ def pi(states):
 '''
  Recursive qLearning Method
 '''
-
 def rlLearn(state, turn):
     global boards, discountFact, stepFactor, epsilon, rewards
 
@@ -98,7 +97,10 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, saveBoards)
 
     print "Loading Board Configs"
-    boards = board.combinations(rewards)
+    f = open('trained.bin', 'rb')
+    boards = np.load(f)
+
+    # boards = board.combinations(rewards)
     print "Loaded ", len(boards), " Boards\n"
 
     while True:
