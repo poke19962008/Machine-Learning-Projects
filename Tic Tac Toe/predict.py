@@ -53,8 +53,8 @@ if __name__ == '__main__':
                 print "--------------------------------"
                 break
 
-            grid = predict(model, grid)[0]
-            # grid = predict_(grid)
+            # grid = predict(model, grid)[0]
+            grid = predict_(grid)
             print grid
             grid = np.around(grid)
 

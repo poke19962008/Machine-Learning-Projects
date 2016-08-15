@@ -11,7 +11,7 @@ import numpy as np
 '''
  Return the initial Stage of board
 '''
-def combinations():
+def combinations(rewards):
     board = []
     for i in xrange(0, 19683):
         c = i
@@ -28,11 +28,13 @@ def combinations():
         gameOver = hasEnd(state)
         if gameOver[0]:
             if gameOver[1] == 'x':
-                board.append(np.array([state, 1, []]))
-            else:
-                board.append(np.array([state, -1, []]))
+                board.append(np.array([state, rewards['win'], []]))
+            elif gameOver[1] == 'o':
+                board.append(np.array([state, rewards['loss'], []]))
+            elif gameOver[1] == 'xo':
+                board.append(np.array([state, rewards['draw'], []]))
         else:
-            board.append(np.array([state, 0, []]))
+            board.append(np.array([state, 0.5, []]))
     return np.array(board)
 
 '''

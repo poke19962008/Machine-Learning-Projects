@@ -1,125 +1,86 @@
-from __future__ import division
-import signal, sys
-import numpy as np
 import board
+import numpy as np
+import signal, sys
+import random as rnd
+
+initState = [0]*9
+boards = []
 
 '''
  Constants Used
  discountFact: Discount Factor for Temporal Difference Learning Algorithm
  stepFactor: Step Size
+ Epsilon: Greedy Factor
  rewards: reward points for the win, loss and draw match
- temperture: Temperature Policy Selection using Boltzman Distribution
 '''
 discountFact = 0.9
 stepFactor = 0.09
+epsilon = 0.1
 rewards = {
     'win': 1,
     'loss': 0,
     'draw': 0.5
 }
 
-epochs = 0
-boards = None
+'''
+ Search the state from the look up table
+'''
+def getStateInfo(state):
+    for i in xrange(len(boards)):
+        if len(np.where(np.all(boards[i][0] == state))[0]):
+            return boards[i][1], len(boards[i][2]), i
+            break
 
 '''
- Temporal Difference Learning
+ Policy Selection
 '''
-def tdLearn(path, hasWin):
-    global discountFact, stepFactor, rewards, generation, boards, epochs
-    stepFactor_ = stepFactor
+def pi(states):
+    V_Si = []
+    for state in states:
+        V, freq, ind = getStateInfo(state)
+        V_Si.append(V)
 
-    if hasWin[1] == 'x':
-        reward = rewards['win']
-    elif hasWin[1] == 'o':
-        reward = rewards['loss']
-    else:
-        reward = rewards['draw']
-    Vprev = reward
-
-    for j in xrange(len(path)-2, 0, -1):
-        for i in xrange(0, len(boards)):
-            if len(np.where(np.all(boards[i][0] == path[j], axis=0))[0]):
-                stepFactor = len(boards[i][2])
-                if stepFactor == 0:
-                    stepFactor = 1
-                else:
-                    stepFactor = 1/stepFactor
-
-                # Update V(S)
-                V = boards[i][1]
-                boards[i][1] += stepFactor*(discountFact*Vprev - V)
-
-                boards[i][2].append(boards[i][1])
-
-                print path[j], boards[i][1], stepFactor, hasWin[1]
-                break
-
-    epochs += 1
-
+    iPi = np.argmax(V_Si)
+    return states[iPi]
 
 '''
- Starts the Learning of each possible path
+ Recursive qLearning Method
 '''
-def train():
-    initState = np.zeros(9)
-    player = 'x'
-    xStack = np.array([initState])
-    oStack = np.array([initState])
 
-    parent = np.empty((1, 9))
-    parent[:] = np.nan
-    child = [[initState]]
+def rlLearn(state, turn):
+    global boards, discountFact, stepFactor, epsilon, rewards
 
-    path = np.array([initState])
-    paths = []
-    hasEnd = False
+    V, freq, ind = getStateInfo(state)
+    player = 'x' if turn else 'o'
 
-    while True:
-        if player == "x":
-            if not len(xStack):
-                break
-            curState = xStack[len(xStack)-1]
-            xStack = np.delete(xStack, len(xStack)-1, axis=0)
+    stepFactor_ = stepFactor/freq if freq else stepFactor
+
+    nextStates = board.nextStates(state, player)
+
+    rand = rnd.random()
+    if rand < epsilon:  # Greedy Move
+        nextMove = pi(nextStates)
+    else:  # Random Move
+        iNextMove = rnd.randint(0, len(nextStates)-1)
+        nextMove = nextStates[iNextMove]
+
+
+    hasEnd = board.hasEnd(nextMove)
+    if hasEnd[0]:
+        print hasEnd[1], " Won"
+        if hasEnd[1] == 'x':
+            return rewards['win']
+        elif hasEnd[0] == 'o':
+            return rewards['loss']
         else:
-            if not len(oStack):
-                break
-            curState = oStack[len(oStack)-1]
-            oStack = np.delete(oStack, len(oStack)-1, axis=0)
-        player = 'o' if player == 'x' else 'x'
+            return rewards['draw']
 
-        for i in xrange(0, len(child)):
-            find = np.where(np.all(curState == child[i], axis=1))
-            if len(find[0]):
-                pInd = i
-                break
+    nextStateV = rlLearn(nextMove, not turn)
+    boards[ind][1] += stepFactor_*(nextStateV - boards[ind][1])
+    boards[ind][2].append(boards[ind][1])
 
-        if hasEnd:
-            hasEnd = False
-            spliceInd = -1
-            for i in xrange(0, len(paths)):
-                spliceInd = np.where(np.all(parent[pInd] == paths[i], axis=1))
-                if len(spliceInd[0]):
-                    spliceInd = spliceInd[0][0]
-                    break
-            path = np.delete(path, np.s_[spliceInd+1::], 0)
-
-        path = np.append(path, [curState], axis=0)
-
-        hasWin = board.hasEnd(curState)
-        if not hasWin[0]:
-            nextMove = board.nextStates(curState, 'o' if player == 'x' else 'x')
-            parent = np.append(parent, [curState], axis=0)
-            child.append(nextMove)
-            if player == "x":
-                xStack = np.append(xStack, nextMove, axis=0)
-            else:
-                oStack = np.append(oStack, nextMove, axis=0)
-        else:
-            hasEnd = True
-            paths.append(path)
-            tdLearn(path, hasWin)
-            print "----------------END----------------"
-    saveBoards(None, None)
+    print state, player, boards[ind][1]
+    return boards[ind][1]
 
 '''
  Save Board Before Termination
@@ -128,18 +89,18 @@ def saveBoards(signal, frame):
     print "\n\nSaving Trained Datasets"
     f = file("trained.bin","wb")
     np.save(f, boards)
-    print "[SUCCESS] Saved"
 
-    sys.exit(0)
+    print "[SUCCESS] BoardSaved"
+    exit()
 
 if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, saveBoards)
 
-    print  "Loading boards..."
-    boards = board.combinations()
-    print  "Loaded ", len(boards), "Boards"
+    print "Loading Board Configs"
+    boards = board.combinations(rewards)
+    print "Loaded ", len(boards), " Boards\n"
 
-    print "\n\nStarted Training"
-    print  "Press ctrl+c to close and save the trained dataset"
-    train()
+    while True:
+        rlLearn(initState, 1)
+        print "--------END--------"
