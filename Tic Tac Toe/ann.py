@@ -2,10 +2,11 @@ import board
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import argparse
 
 alpha = 0.0001
 epochs = 35000
-nHidden = 70
+nHidden = 50
 
 policy = []
 
@@ -86,16 +87,26 @@ def build(P):
     return ann
 
 if __name__ == '__main__':
-    f = open("trained.bin", "rb")
-    V = np.load(f)
-    calcPolicy(V)
-    f = open("policy.bin", "wb")
-    np.save(f, np.array(policy))
+    parser = argparse.ArgumentParser()
 
-    # f = open("policy.bin", "rb")
-    # P = np.load(f)
-    # model = build(P)
-    # with open('ann.pickle', 'wb') as handle:
-    #     pickle.dump(model, handle)
-    #
-    # plt.show()
+    parser.add_argument("--mapPolicy", action="store_true", default=False, dest="mapPolicy", help="Mpas the the state action value pair")
+
+    parser.add_argument("--trainNN", action="store_true", default=False, dest="trainNN", help="Train the Neural Network")
+
+    res = parser.parse_args()
+
+    if res.mapPolicy:
+        f = open("trained.bin", "rb")
+        V = np.load(f)
+        calcPolicy(V)
+        f = open("policy.bin", "wb")
+        np.save(f, np.array(policy))
+
+    if res.trainNN:
+        f = open("policy.bin", "rb")
+        P = np.load(f)
+        model = build(P)
+        with open('ann.pickle', 'wb') as handle:
+            pickle.dump(model, handle)
+
+        plt.show()

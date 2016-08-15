@@ -85,6 +85,8 @@ def rlLearn(state, turn):
  Save Board Before Termination
 '''
 def saveBoards(signal, frame):
+    global boards
+    
     print "\n\nSaving Trained Datasets"
     f = file("trained.bin","wb")
     np.save(f, boards)

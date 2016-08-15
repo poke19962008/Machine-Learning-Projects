@@ -38,9 +38,18 @@ if __name__ == '__main__':
         model = pickle.load(handler)
 
         grid = [0]*9
-        grid[-1] = 1
         while True:
+
+            # grid = predict(model, grid)[0]
+            grid = predict_(grid)
+            print grid
+            grid = np.around(grid)
             format(grid)
+
+            hasEnd = board.hasEnd(grid)
+            if hasEnd[0]:
+                print hasEnd[1], " won!!"
+                break
 
             row = input("Row: ")
             col = input("Coloumn: ")
@@ -51,14 +60,4 @@ if __name__ == '__main__':
             if hasEnd[0]:
                 print hasEnd[1], " won!!"
                 print "--------------------------------"
-                break
-
-            # grid = predict(model, grid)[0]
-            grid = predict_(grid)
-            print grid
-            grid = np.around(grid)
-
-            hasEnd = board.hasEnd(grid)
-            if hasEnd[0]:
-                print hasEnd[1], " won!!"
                 break
