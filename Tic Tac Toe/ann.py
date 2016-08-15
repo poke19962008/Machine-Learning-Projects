@@ -10,7 +10,6 @@ nHidden = 50
 
 policy = []
 
-
 '''
  Maps the state action pairs on the basis of constant policy function
 '''
