@@ -10,6 +10,10 @@ nHidden = 50
 
 policy = []
 
+
+'''
+ Maps the state action pairs on the basis of constant policy function
+'''
 def calcPolicy(V):
     global policy
 
@@ -32,11 +36,18 @@ def calcPolicy(V):
             policy.append([V[i][0], vAfterStates[piInd][0]])
 
 
+'''
+ Calculates the  Average Mean Square Error of Neural Network
+'''
 def avgLoss(predOtp, otp):
     loss = np.square(predOtp - otp)
     loss = np.sum(loss, axis=1)/9
     return 0.5*np.sum(loss, axis=0)/len(otp)
 
+
+'''
+ Build the model of Neural Network
+'''
 def build(P):
     error = []
 
