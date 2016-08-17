@@ -60,7 +60,6 @@ if __name__ == '__main__':
                 grid = predict(model, grid)[0]
                 grid = np.around(grid)
             elif result.lookup:
-                print "herer"
                 grid = predict_(grid)
             format(grid)
 
