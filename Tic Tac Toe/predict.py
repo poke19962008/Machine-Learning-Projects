@@ -6,23 +6,39 @@ import argparse
 '''
  Predict on the basis of given Neural Network model
 '''
-def predict(model, inp):
-    inp = np.array(inp)
-    W1, W2, B1, B2 = model["W1"], model["W2"], model["B1"], model["B2"]
+def modulate(x):
+    y = []
+    for i in xrange(9):
+        if x[i] == 1:
+            y.append(1), y.append(1)
+        elif x[i] == -1:
+            y.append(-1), y.append(-1)
+        else:
+            y.append(-1), y.append(1)
+    return y
 
-    Z1 = inp.dot(W1) + B1
-    a1 = np.tanh(Z1)
-    Z2 = a1.dot(W2)  + B2
-    predOtp = np.tanh(Z2)
+def demodulate(x):
+    y = []
+    for i in xrange(0, 9*2, 2):
+        if x[i] == 1 and x[i+1] == 1:
+            y.append(1)
+        elif x[i] == -1 and x[i+1] == -1:
+            y.append(-1)
+        else:
+            y.append(0)
+    return y
 
-    return predOtp
+def predict(weight, inp):
+    inp = modulate(inp)
+    net = np.dot(weight, inp)
+
+    predOtp = np.piecewise(net, [net<0, net>0], [-1, 1])
+    return demodulate(predOtp)
 
 '''
  Predict on the basis of the policy Lookup Table
 '''
-def predict_(inp):
-    f = open('policy.bin', 'rb')
-    P = np.load(f)
+def predict_(P, inp):
 
     for p in P:
         find = np.where(np.all(p[0] == inp, axis=0))
@@ -49,32 +65,37 @@ if __name__ == '__main__':
     parser.add_argument("--lookup", action="store_true", default=True, dest="lookup", help="Play using the lookup table")
 
     result = parser.parse_args()
+    f = open('policy.bin', 'rb')
+    P = np.load(f)
+
 
     with open('ann.pickle', 'rb') as handler:
-        model = pickle.load(handler)
+        weight = pickle.load(handler)
 
-        grid = [0]*9
-        while True:
-
-            if result.ann:
-                grid = predict(model, grid)[0]
-                grid = np.around(grid)
-            elif result.lookup:
-                grid = predict_(grid)
-            format(grid)
-
-            hasEnd = board.hasEnd(grid)
-            if hasEnd[0]:
-                print hasEnd[1], " won!!"
-                break
-
-            row = input("Row: ")
-            col = input("Coloumn: ")
-
-            grid[(row-1)*3 + col-1] = -1
-            hasEnd = board.hasEnd(grid)
-            print "--------------------------------"
-            if hasEnd[0]:
-                print hasEnd[1], " won!!"
-                print "--------------------------------"
-                break
+        for p in P:
+            print predict_(P, p[0])-predict(weight, p[0])
+    #
+    #     grid = [0]*9
+    #     while True:
+    #
+    #         if result.ann:
+    #             grid = predict(weight, grid)
+    #         elif result.lookup:
+    #             grid = predict_(P, grid)
+    #         format(grid)
+    #
+    #         hasEnd = board.hasEnd(grid)
+    #         if hasEnd[0]:
+    #             print hasEnd[1], " won!!"
+    #             break
+    #
+    #         row = input("Row: ")
+    #         col = input("Coloumn: ")
+    #
+    #         grid[(row-1)*3 + col-1] = -1
+    #         hasEnd = board.hasEnd(grid)
+    #         print "--------------------------------"
+    #         if hasEnd[0]:
+    #             print hasEnd[1], " won!!"
+    #             print "--------------------------------"
+    #             break

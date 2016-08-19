@@ -43,58 +43,31 @@ def avgLoss(predOtp, otp):
     loss = np.sum(loss, axis=1)/9
     return 0.5*np.sum(loss, axis=0)/len(otp)
 
+def modulate(x):
+    y = []
+    for i in xrange(9):
+        if x[i] == 1:
+            y.append(1), y.append(1)
+        elif x[i] == -1:
+            y.append(-1), y.append(-1)
+        else:
+            y.append(-1), y.append(1)
+    return y
 
 '''
  Build the model of Neural Network
 '''
 def build(P):
-    error = []
+    source, target = P[:,0], P[:,1]
+    weight = np.zeros((9*2, 9*2))
 
-    # with open('ann.pickle', 'rb') as handler:
-    #     model = pickle.load(handler)
-    #     W1, W2, B1, B2 = model["W1"], model["W2"], model["B1"], model["B2"]
+    for i in xrange(len(P)):
+        sourceModulated = modulate(source[i])
+        targetModulated = modulate(target[i])
 
-    W1 = np.random.randn(9, nHidden)
-    W2 = np.random.randn(nHidden, 9)
-    B1 = np.zeros((1, nHidden))
-    B2 = np.zeros((1, 9))
+        weight += np.transpose([sourceModulated])*targetModulated
+    return weight
 
-    ann = {}
-
-    for i in xrange(epochs):
-        Z1 = P[:,0].dot(W1) + B1
-        a1 = np.tanh(Z1)
-        Z2 = a1.dot(W2)  + B2
-        predOtp = np.tanh(Z2)
-        predOtp = np.around(predOtp)
-
-        delta2 = predOtp
-        delta2 = predOtp - P[:,1]
-        delta1 = delta2.dot(W2.T) * (1 - np.power(a1, 2))
-
-        dW2 = (a1.T).dot(delta2)
-        dB2 = np.sum(delta2, axis=0, keepdims=True)
-        dW1 = (P[:,0].T).dot(delta1)
-        dB1 = np.sum(delta1, axis=0, keepdims=True)
-
-        W1 += -alpha*(dW1)
-        B1 += -alpha*(dB1)
-        W2 += -alpha*(dW2)
-        B2 += -alpha*(dB2)
-
-        ann = {
-            "W1": W1,
-            "B1": B1,
-            "W2": W2,
-            "B2": B2
-        }
-        loss = avgLoss(predOtp, P[:,1])
-        if not i%100:
-            print "Epoch=", i, "Loss(MSE)=", loss
-        error.append([i, loss])
-    error = np.array(error)
-    plt.plot(error[:,0], error[:,1])
-    return ann
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -115,8 +88,10 @@ if __name__ == '__main__':
     if res.trainNN:
         f = open("policy.bin", "rb")
         P = np.load(f)
-        model = build(P)
+        weight = build(P)
+
+        print "weight: \n", weight
         with open('ann.pickle', 'wb') as handle:
-            pickle.dump(model, handle)
+            pickle.dump(weight, handle)
 
         plt.show()
