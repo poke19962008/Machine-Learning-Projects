@@ -21,7 +21,7 @@ A sequence of tic-tac-toe moves. The solid lines represent the moves taken durin
 
 ## Artificial Neural Network
 
-In order to reduce the computation speed and memory I have used 3 layered perceptron model to store the final lookup table. I tried various learning rates and node in hidden layer. I kept hyperbolic tangent for both hidden and output layers. Turns out best performance is observed with alpha 0.0001, 50 hidden layer nodes over 35,000 epochs.
+In order to reduce the computation speed and memory I have used Bidirectional Associative Memory (BAM) to store the  
 
 ## Resources
 
