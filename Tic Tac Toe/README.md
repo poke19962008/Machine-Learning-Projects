@@ -21,7 +21,9 @@ A sequence of tic-tac-toe moves. The solid lines represent the moves taken durin
 
 ## Artificial Neural Network
 
-In order to reduce the computation speed and memory I have used Bidirectional Associative Memory (BAM) to store the  
+In order to reduce the computation speed and memory I have used Bidirectional Associative Memory (BAM) to store the look up table. Weight is calculated using
+
+<center>![](https://raw.githubusercontent.com/poke19962008/Neural-Network-Projects/master/Tic%20Tac%20Toe/res/latex_66ac80c2437cfa38efe7a223a758ad40.png)</center> 
 
 ## Resources
 
@@ -29,5 +31,7 @@ In order to reduce the computation speed and memory I have used Bidirectional As
 
 - **Artificial Intelligence: A Modern Approach** by Peter Norvig
 
+- **Bidirectional Associative Memory (1988)** by Bart Kosko [[link]](http://sipi.usc.edu/~kosko/BAM.pdf)
 
-- **[Reinforcement Learning](https://www.youtube.com/watch?v=RtxI449ZjSc)** by Andrew Ng
+
+- **Reinforcement Learning** by Andrew Ng [[watch]](https://www.youtube.com/watch?v=RtxI449ZjSc)
