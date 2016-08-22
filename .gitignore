@@ -90,3 +90,5 @@ ENV/
 
 # Datasets
 Music\ Year\ Prediction/YearPredictionMSD.txt
+Music\ Year\ Prediction/training.bin
+Music\ Year\ Prediction/test.bin
