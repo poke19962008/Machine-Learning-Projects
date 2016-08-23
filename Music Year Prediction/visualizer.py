@@ -37,10 +37,22 @@ def allBPlotter():
         plt.subplot(4, 2, ftrs.index(ftr)+1)
         meanGrapher(ftr)
 
+def threeDFeaturePlot():
+    with open('bin/mean.bin', 'r') as f:
+        mean = np.load(f)
+        with open('loudBrightFlat.txt', 'a') as f:
+            for i in xrange(len(mean)):
+                row = mean[i][1:4]
+                row = ' '.join(str(x) for x in row)
+                row += " "+str(i)+"\n"
+                f.write(row)
+        print "[SUCCESS] Saved to loudBrightFlat.txt "
+        print "splot (\"loudBrightFlat.txt\") with points palette"
 
 if __name__ == '__main__':
     # allFourMeanPlotter()
-    allBPlotter()
+    # allBPlotter()
+    threeDFeaturePlot()
 
-    plt.legend()
-    plt.show()
+    # plt.legend()
+    # plt.show()
