@@ -16,7 +16,7 @@ features = {
     'b8': 12,
 }
 
-def meanGrapher(ftr):
+def meanPlotter(ftr):
     with open('bin/mean.bin', 'r') as f:
         mean = np.load(f)
         plt.plot(mean[:,0], mean[:,features[ftr]], 'o', label="mean"+ftr)
@@ -25,17 +25,17 @@ def meanGrapher(ftr):
         plt.title('Mean '+ftr)
 
 def allFourMeanPlotter():
-    meanGrapher('loudness')
-    meanGrapher('brightness')
-    meanGrapher('flatness')
-    meanGrapher('attack')
+    meanPlotter('loudness')
+    meanPlotter('brightness')
+    meanPlotter('flatness')
+    meanPlotter('attack')
 
 def allBPlotter():
     ftrs = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8']
 
     for ftr in ftrs:
         plt.subplot(4, 2, ftrs.index(ftr)+1)
-        meanGrapher(ftr)
+        meanPlotter(ftr)
 
 def threeDFeaturePlot():
     with open('bin/mean.bin', 'r') as f:
@@ -52,7 +52,7 @@ def threeDFeaturePlot():
 if __name__ == '__main__':
     # allFourMeanPlotter()
     # allBPlotter()
-    threeDFeaturePlot()
+    # threeDFeaturePlot()
 
-    # plt.legend()
-    # plt.show()
+    plt.legend()
+    plt.show()
