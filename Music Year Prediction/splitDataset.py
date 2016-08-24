@@ -3,7 +3,7 @@ import numpy as np
 
 
 def calculateMean(trn):
-    with open('training.bin', 'r') as f:
+    with open('train.bin', 'r') as f:
         trn = np.load(f)
         years = np.unique(trn[:,0])
 
@@ -31,14 +31,14 @@ def calculateMean(trn):
             print "[SUCCESS] Saved as `mean.bin` "
 
 def saveFile(trainingSet, testSet):
-    with open('training.bin', 'wb') as f:
+    with open('train.bin', 'wb') as f:
         np.save(f, trainingSet)
         print "[SUCCESS] Saved training set."
     with open('test.bin', 'wb') as f:
         np.save(f, testSet)
         print "[SUCCESS] Saved test set."
 
-    print "Training Set: training.bin"
+    print "Training Set: train.bin"
     print "Test Set: test.bin"
 
 
@@ -47,19 +47,22 @@ if __name__ == '__main__':
     with open('YearPredictionMSD.txt', 'r') as rawDataSet:
         rawDataSet = rawDataSet.read().split("\n")
         print "[SUCCESS] Loaded raw dataset"
-        trainingSet, testSet = [], []
+        trainingSet = []
+        testSet = []
 
         for i in xrange(len(rawDataSet)):
             tmp = rawDataSet[i].split(",")
             try:
                 tmp = [float(x) for x in tmp]
                 tmp[0] = int(tmp[0])
+
+                if i<=463715:
+                    trainingSet.append(tmp)
+                else:
+                    testSet.append(tmp)
             except:
                 print "Could not convert ", tmp, " to float"
-            if i<=463715:
-                trainingSet.append(tmp)
-            else:
-                testSet.append(tmp)
+
         print "[SUCCESS] Parsed Files"
 
         saveFile(trainingSet, testSet)
