@@ -1,5 +1,7 @@
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d
 
 features = {
     'loudness': 1,
@@ -17,7 +19,7 @@ features = {
 }
 
 def meanPlotter(ftr):
-    with open('bin/mean.bin', 'r') as f:
+    with open('bin/trainMean.bin', 'r') as f:
         mean = np.load(f)
         plt.plot(mean[:,0], mean[:,features[ftr]], 'o', label="mean"+ftr)
         plt.xlabel('Year')
@@ -38,7 +40,7 @@ def allBPlotter():
         meanPlotter(ftr)
 
 def threeDFeaturePlot():
-    with open('bin/mean.bin', 'r') as f:
+    with open('bin/trainMean.bin', 'r') as f:
         mean = np.load(f)
         with open('loudBrightFlat.txt', 'a') as f:
             for i in xrange(len(mean)):
@@ -49,10 +51,45 @@ def threeDFeaturePlot():
         print "[SUCCESS] Saved to loudBrightFlat.txt "
         print "splot (\"loudBrightFlat.txt\") with points palette"
 
+def clusterMapp():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    with open('bin/train.bin', 'r') as f:
+        data = np.load(f)
+        years = np.unique(data[:,0])[20:26]
+
+        colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
+
+        for year in years:
+            rowRng = (data[:,0] == year).nonzero()[0]
+
+            x, y, z = [], [], []
+
+            limit = 0
+            for row in rowRng:
+                limit += 1
+                x.append(data[row][1])
+                y.append(data[row][2])
+                z.append(data[row][3])
+
+                if limit == 50:
+                    break
+
+            ind = np.where(years == year)[0][0]
+            ax.scatter(x, y, z, c=colors[ind], marker='o', label=str(year))
+            print year
+        ax.set_xlabel('Loudness')
+        ax.set_ylabel('brightness')
+        ax.set_zlabel('flatness')
+
 if __name__ == '__main__':
+    # meanPlotter('loudness')
     # allFourMeanPlotter()
     # allBPlotter()
     # threeDFeaturePlot()
+    #
+    clusterMapp()
 
     plt.legend()
     plt.show()

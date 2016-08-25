@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-bandwidth = 0.299
-alpha=1
+bandwidth = 0.3
+alpha=10
 
 '''
  Gaussian based kernel
@@ -53,28 +53,29 @@ def learn(X, Y, datapoint):
         return None
 
 if __name__ == '__main__':
- with open('bin/trainMean.bin', 'r') as ftrain:
-     with open('bin/testMean.bin', 'r') as ftest:
+ with open('bin/train.bin', 'r') as ftrain:
+     with open('bin/test.bin', 'r') as ftest:
         training, testing = np.load(ftrain), np.load(ftest)
 
         Ytrain, Xtrain = training[:,0], training[:,1]
-        Ytest, Xtest = testing[0:,0], testing[0:,1]
+        Ytest, Xtest = testing[:,0], testing[:,1]
+
 
         hyp = [predict(Xtrain, Ytrain, x) for x in Xtest]
         print "Errors: ", hyp-Ytest
         print "Average Absolute Error: ", 0.5*np.sum(np.absolute(hyp-Ytest))/Ytest.shape[0]
         print "Average Squared Error: ", 0.5*np.sum(np.square(hyp-Ytest))/Ytest.shape[0]
 
-        plt.plot(Ytest,Xtest, 'o', color="r", label="Actual")
-        plt.plot(hyp,Xtest, 'o', color="b", label="Predicted")
-        plt.plot(Ytrain,Xtrain, 'o', color="y", label="Training")
+        plt.plot(Xtest,Ytest, 'o', color="r", label="Actual")
+        plt.plot(Xtest, hyp, 'o', color="b", label="Predicted")
+        plt.plot(Xtrain,Ytrain, 'o', color="y", label="Training")
 
         plt.xlabel('Year')
         plt.ylabel('Mean of average loudness')
         plt.title('LOSS Prediction | Loudness')
 
         axes = plt.gca()
-        axes.set_xlim([1920,2020])
+        axes.set_ylim([1920,2020])
 
         plt.legend()
         plt.show()
