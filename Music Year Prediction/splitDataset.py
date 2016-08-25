@@ -2,33 +2,34 @@ from __future__ import division
 import numpy as np
 
 
-def calculateMean(trn):
-    with open('train.bin', 'r') as f:
-        trn = np.load(f)
-        years = np.unique(trn[:,0])
+def calculateMean(fname, rfile):
+    rfile = open("%s"%rfile, 'r')
+    data = np.load(rfile)
 
-        mean = np.array([])
-        for year in years:
-            try:
-                rng = (trn[:,0]==year).nonzero()[0]
+    years = np.unique(data[:,0])
 
-                avg = np.zeros(90)
-                for i in rng:
-                    avg = np.add(avg, trn[i][1:])
-                avg = avg/len(rng)
-                avg = np.append([year], avg)
-                if not len(mean):
-                    mean = np.array([avg])
-                else:
-                    mean = np.append(mean, np.array([avg]), axis=0)
+    mean = np.array([])
+    for year in years:
+        try:
+            rng = (data[:,0]==year).nonzero()[0]
 
-                print "[SUCCESS] Calculated mean vectors for year ", year
-            except:
-                print "[FAILED] COuld not calculate mean for year ", year
+            avg = np.zeros(90)
+            for i in rng:
+                avg = np.add(avg, data[i][1:])
+            avg = avg/len(rng)
+            avg = np.append([year], avg)
+            if not len(mean):
+                mean = np.array([avg])
+            else:
+                mean = np.append(mean, np.array([avg]), axis=0)
 
-        with open('mean.bin', 'wb') as fi:
-            np.save(fi, mean)
-            print "[SUCCESS] Saved as `mean.bin` "
+            print "[SUCCESS] Calculated mean vectors for year ", year
+        except:
+            print "[FAILED] COuld not calculate mean for year ", year
+
+    with open('%s.bin'%fname, 'wb') as fi:
+        np.save(fi, mean)
+        print "[SUCCESS] Saved as `%s.bin` "%fname
 
 def saveFile(trainingSet, testSet):
     with open('train.bin', 'wb') as f:
@@ -66,4 +67,5 @@ if __name__ == '__main__':
         print "[SUCCESS] Parsed Files"
 
         saveFile(trainingSet, testSet)
-        calculateMean(trainingSet)
+        calculateMean("trainMean", "train.bin")
+        calculateMean("testMean", "test.bin")
