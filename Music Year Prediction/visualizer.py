@@ -57,7 +57,7 @@ def clusterMapp():
 
     with open('bin/train.bin', 'r') as f:
         data = np.load(f)
-        years = np.unique(data[:,0])[20:26]
+        years = np.unique(data[:,0])
 
         colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
 
@@ -70,15 +70,23 @@ def clusterMapp():
             for row in rowRng:
                 limit += 1
                 x.append(data[row][1])
-                y.append(data[row][2])
-                z.append(data[row][3])
+                y.append(data[row][3])
+                z.append(data[row][6])
 
                 if limit == 50:
                     break
 
+            # Centroid Calculation
+            x, y, z = np.array(x), np.array(y), np.array(z)
+            cent_x = np.sum(x)/x.shape[0]
+            cent_y = np.sum(y)/y.shape[0]
+            cent_z = np.sum(z)/z.shape[0]
+
             ind = np.where(years == year)[0][0]
-            ax.scatter(x, y, z, c=colors[ind], marker='o', label=str(year))
+            # ax.scatter(x, y, z, c=colors[ind], marker='o')
+            ax.scatter(cent_x, cent_y, cent_z, marker='x')
             print year
+
         ax.set_xlabel('Loudness')
         ax.set_ylabel('brightness')
         ax.set_zlabel('flatness')
