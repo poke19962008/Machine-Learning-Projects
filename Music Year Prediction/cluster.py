@@ -54,6 +54,7 @@ def clusterCentroid(train, features, limit):
         print "[SUCCESS] Saved as `clusterCentroid.bin`"
 
 '''
+ Predicts on the basis of minimum Euclidean Distance
 '''
 def predict(features):
     with open('bin/clusterCentroid.bin', 'r') as f:
@@ -82,4 +83,25 @@ if __name__ == '__main__':
         features = ['loudness', 'flatness', 'b3']
 
         # clusterCentroid(train, features, -1)
-        print predict([43.3, 5.2, -2.7])
+        # print predict([43.3, 5.2, -2.7])
+
+
+        # Test Prediction
+        with open('bin/test.bin') as f:
+            tests = np.load(f)
+
+            totalAbsErr, totalMSE, n = 0, 0, 0
+            for test in tests:
+                hyp = predict([
+                                test[timbreVector['loudness']],
+                                test[timbreVector['flatness']],
+                                test[timbreVector['b3']]])
+                n += 1
+                absErr = np.absolute(hyp[0] - test[0])
+                mse = 0.5*np.square(absErr)
+                totalAbsErr += absErr
+                totalMSE += mse
+
+                print "Actual:", test[0], "Predicted:", hyp[0], "Centroid Distance: ", hyp[-1]
+                print "Abs. Err:", absErr, "MSE:", mse, "Avg Abs. Err:", totalAbsErr/n, "Avg MSE:", totalMSE/n
+                print "\n"
