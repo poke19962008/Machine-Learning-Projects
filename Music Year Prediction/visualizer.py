@@ -57,11 +57,12 @@ def clusterMapp():
 
     with open('bin/train.bin', 'r') as f:
         data = np.load(f)
-        years = np.unique(data[:,0])
+        years = np.unique(data[:15,0])
 
         colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
+        axis = ['brightness', 'flatness', 'b3']
 
-        for year in years:
+        for year in years[:-1]:
             rowRng = (data[:,0] == year).nonzero()[0]
 
             x, y, z = [], [], []
@@ -69,11 +70,11 @@ def clusterMapp():
             limit = 0
             for row in rowRng:
                 limit += 1
-                x.append(data[row][1])
-                y.append(data[row][3])
-                z.append(data[row][6])
+                x.append(data[row][features[axis[0]]])
+                y.append(data[row][features[axis[1]]])
+                z.append(data[row][features[axis[2]]])
 
-                if limit == 50:
+                if limit == 25:
                     break
 
             # Centroid Calculation
@@ -83,13 +84,14 @@ def clusterMapp():
             cent_z = np.sum(z)/z.shape[0]
 
             ind = np.where(years == year)[0][0]
-            # ax.scatter(x, y, z, c=colors[ind], marker='o')
+            ax.scatter(x, y, z, c=colors[ind], marker='o')
             ax.scatter(cent_x, cent_y, cent_z, marker='x')
             print year
+            break
 
-        ax.set_xlabel('Loudness')
-        ax.set_ylabel('brightness')
-        ax.set_zlabel('flatness')
+        ax.set_xlabel(axis[0])
+        ax.set_ylabel(axis[1])
+        ax.set_zlabel(axis[2])
 
 if __name__ == '__main__':
     # meanPlotter('loudness')

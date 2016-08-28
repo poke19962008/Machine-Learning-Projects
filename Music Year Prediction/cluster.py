@@ -12,7 +12,40 @@ timbreVector = {
     'b5': 9,
     'b6': 10,
     'b7': 11,
-    'b8': 12
+    'b8': 12,
+    'cv1': 13,
+    'cv2': 14,
+    'cv3': 15,
+    'cv4': 16,
+    'cv5': 17,
+    'cv6': 18,
+    'cv7': 19,
+    'cv8': 20,
+    'cv9': 21,
+    'cv10': 22,
+    'cv11': 23,
+    'cv12': 24,
+    'cv13': 25,
+    'cv14': 26,
+    'cv15': 27,
+    'cv16': 28,
+    'cv17': 29,
+    'cv18': 30,
+    'cv19': 31,
+    'cv20': 32,
+    'cv21': 33,
+    'cv22': 34,
+    'cv23': 35,
+    'cv24': 36,
+    'cv25': 37,
+    'cv26': 38,
+    'cv27': 39,
+    'cv28': 40,
+    'cv29': 41,
+    'cv30': 42,
+    'cv31': 43,
+    'cv32': 44,
+    'cv33': 45,
 }
 
 
@@ -80,11 +113,10 @@ def predict(features):
 if __name__ == '__main__':
     with open('bin/train.bin', 'r') as f:
         train = np.load(f)
-        features = ['loudness', 'flatness', 'b3']
+        features = ['loudness', 'b2', 'b3']
 
-        # clusterCentroid(train, features, -1)
+        clusterCentroid(train, features, -1)
         # print predict([43.3, 5.2, -2.7])
-
 
         # Test Prediction
         with open('bin/test.bin') as f:
@@ -93,9 +125,9 @@ if __name__ == '__main__':
             totalAbsErr, totalMSE, n = 0, 0, 0
             for test in tests:
                 hyp = predict([
-                                test[timbreVector['loudness']],
-                                test[timbreVector['flatness']],
-                                test[timbreVector['b3']]])
+                                test[timbreVector[features[0]]],
+                                test[timbreVector[features[1]]],
+                                test[timbreVector[features[2]]]])
                 n += 1
                 absErr = np.absolute(hyp[0] - test[0])
                 mse = 0.5*np.square(absErr)
