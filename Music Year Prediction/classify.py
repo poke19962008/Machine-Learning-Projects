@@ -37,27 +37,30 @@ def learn(fName, features, nRows=-1):
         joblib.dump(clf, 'bin/%s'%fName)
         print "[SUCCESS] Dumped to ", fName
 
-def predict(fName, features):
+def predict(fName, X):
     clf = joblib.load(fName)
+    return clf.predict(X) + minYear
 
-    return clf.predict(features) + minYear
-
-def test(fName, features):
+def test(fName, features, nRows):
     with open('bin/train.bin') as f:
-        test = np.load(f)[:100]
+        test = np.load(f)
 
         x = np.mat(test[:nRows,timbreVector[features[0]]]).reshape(nRows,1)
         y = np.mat(test[:nRows,timbreVector[features[1]]]).reshape(nRows,1)
         z = np.mat(test[:nRows,timbreVector[features[2]]]).reshape(nRows,1)
 
-        print predict()
+        X = np.concatenate((x, y, z), axis=1)
+        Y = test[:nRows,0]
+        pred = predict(fName, X)
+
+        print "Mean Square Error: ", np.mean(0.5*np.square(pred - Y))
+        print "Absolute Error: ", np.mean(np.absolute(pred-Y))
 
 
 
 if __name__ == '__main__':
     features = ['loudness', 'b2', 'b3']
-    fName = "svmf167t2000.pkl"
+    fName = "svmf167t30000.pkl"
 
-    learn(fName, features, 20000)
-
-    # test(fName)
+    # learn(fName, features, 30000)
+    test('bin/'+fName, features, 13000)
