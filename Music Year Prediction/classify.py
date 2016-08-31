@@ -1,7 +1,16 @@
 import numpy as np
 from sklearn import svm
 from sklearn.externals import joblib
+import matplotlib.pyplot as plt
 
+'''
+ Results:
+    classifier: svmf167t70000.pkl
+    train: 70,000
+    test: 30,000
+    <MSE>: 73.35
+    <Abs. Diff.>: 7.14
+'''
 timbreVector = {
     'loudness': 1,
     'brightness': 2,
@@ -29,7 +38,7 @@ def learn(fName, features, nRows=-1):
         X = np.concatenate((x, y, z), axis=1)
         Y = train[:nRows,0] % minYear
 
-        clf = svm.SVC(verbose=2)
+        clf = svm.SVC(verbose=3)
         clf.fit(X, Y)
         print "[SUCCESS] Fitted training data to SVM (kernel: rbf)."
 
@@ -56,11 +65,15 @@ def test(fName, features, nRows):
         print "Mean Square Error: ", np.mean(0.5*np.square(pred - Y))
         print "Absolute Error: ", np.mean(np.absolute(pred-Y))
 
+        plt.scatter(Y, pred-Y, marker='o')
+        plt.xlabel('Actual')
+        plt.ylabel('Difference')
+        plt.show()
 
 
 if __name__ == '__main__':
     features = ['loudness', 'b2', 'b3']
-    fName = "svmf167t30000.pkl"
+    fName = "svmf167t70000.pkl"
 
-    # learn(fName, features, 30000)
-    test('bin/'+fName, features, 13000)
+    # learn(fName, features, 70000)
+    test('bin/'+fName, features, 30000)
