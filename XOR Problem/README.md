@@ -25,3 +25,9 @@ This model consist of NAND, AND and OR gates arranged in suitable order. Below s
 This network executed all the 4 test cases in **0.003s**, with error of 0%.
 
 
+## How to run
+
+```bash
+$ g++ main.cpp --std=c++11
+$ ./a.out 
+```
