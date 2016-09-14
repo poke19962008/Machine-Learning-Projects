@@ -22,11 +22,14 @@ def loadLetter(rootFolder):
                 print "Standard Deviation: ", np.std(image), "\n\n"
             except:
                 print "[FAIL] Cannot Load: ", imageFile, "\n\n"
+            break
+        break
         with open('bin/letters/%s.pkl'%label, 'wb') as f:
             pickle.dump(np.array(npImages), f)
 
 def mergeDatasets():
     trainingSet, validSet, testSet = [], [], []
+    trainingLabel, validLabel, testLabel = [], [], []
 
     pickles = os.listdir("bin/letters")
 
@@ -38,6 +41,11 @@ def mergeDatasets():
             testSize = int(letterSet.shape[0]*0.2)
             validSize = int(trainSize*0.2)
 
+            label = [pkl.split(".")[0]]
+            trainingLabel = np.append(trainingLabel, label*trainSize)
+            testLabel = np.append(testLabel, label*testSize)
+            validLabel = np.append(validLabel, label*validSize)
+
             if not len(trainingSet):
                 trainingSet = letterSet[:trainSize,:,:]
                 testSet = letterSet[trainSize:trainSize+testSize,:,:]
@@ -48,11 +56,12 @@ def mergeDatasets():
             testSet = np.append(testSet, letterSet[trainSize:trainSize+testSize,:,:], axis=0)
             validSet = np.append(validSet, letterSet[:validSize,:,:], axis=0)
 
-    print "Training Set: ", trainingSet.shape
-    print "Validation Set: ", validSet.shape
-    print "Testing Set: ", testSet.shape
+    print "Training Set: ", trainingSet.shape, trainingLabel.shape
+    print "Validation Set: ", validSet.shape, validLabel.shape
+    print "Testing Set: ", testSet.shape, testLabel.shape
 
-    return trainingSet, validSet, testSet
+    return trainingSet, trainingLabel, validSet, validLabel, testSet, testLabel
+
 
 if __name__ == '__main__':
     rootFolder = 'data'
