@@ -77,8 +77,22 @@ def randomVisualiser(dataset, label):
     for i in np.random.permutation(label.shape[0])[:10]:
         plt.imshow(dataset[i])
         print "Label: ", label[i]
-        
+
         plt.show()
+
+def finalPickler(trainingSet, trainingLabel, validSet, validLabel, testSet, testLabel):
+    data = {
+        'trainingSet': trainingSet,
+        'trainingLabel': trainingLabel,
+        'validSet': validSet,
+        'validLabel': validLabel,
+        'testSet': testSet,
+        'testLabel': testLabel
+    }
+
+    with open('bin/notMNIST.pkl', 'wb') as f:
+        pickle.dump(data, f)
+        print "[SUCCESS] Saved as `notMNIST.pkl`"
 
 
 if __name__ == '__main__':
@@ -91,6 +105,8 @@ if __name__ == '__main__':
     validSet, validLabel = randomise(validSet, validLabel)
     testSet, testLabel = randomise(testSet, testLabel)
 
-    randomVisualiser(trainingSet, trainingLabel)
-    randomVisualiser(validSet, validLabel)
-    randomVisualiser(trainingSet, trainingLabel)
+    # randomVisualiser(trainingSet, trainingLabel)
+    # randomVisualiser(validSet, validLabel)
+    # randomVisualiser(trainingSet, trainingLabel)
+
+    finalPickler(trainingSet, trainingLabel, validSet, validLabel, testSet, testLabel)
