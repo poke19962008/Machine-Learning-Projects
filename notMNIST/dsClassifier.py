@@ -50,11 +50,14 @@ def mergeDatasets():
                 trainingSet = letterSet[:trainSize,:,:]
                 testSet = letterSet[trainSize:trainSize+testSize,:,:]
                 validSet = letterSet[:validSize,:,:]
+                print "[SUCCESS] Parsed ", pkl
                 continue
 
             trainingSet =np.append(trainingSet, letterSet[:trainSize,:,:], axis=0)
             testSet = np.append(testSet, letterSet[trainSize:trainSize+testSize,:,:], axis=0)
             validSet = np.append(validSet, letterSet[:validSize,:,:], axis=0)
+
+            print "[SUCCESS] Parsed ", pkl
 
     print "Training Set: ", trainingSet.shape, trainingLabel.shape
     print "Validation Set: ", validSet.shape, validLabel.shape
@@ -63,8 +66,19 @@ def mergeDatasets():
     return trainingSet, trainingLabel, validSet, validLabel, testSet, testLabel
 
 
+def randomise(dataset, label):
+    permut = np.random.permutation(label.shape[0])
+
+    dataset = dataset[permut,::]
+    label = label[permut]
+    return dataset, label
+
 if __name__ == '__main__':
     rootFolder = 'data'
 
     # loadLetter(rootFolder)
-    mergeDatasets()
+    trainingSet, trainingLabel, validSet, validLabel, testSet, testLabel = mergeDatasets()
+
+    trainingSet, trainingLabel = randomise(trainingSet, trainingLabel)
+    validSet, validLabel = randomise(validSet, validLabel)
+    testSet, testLabel = randomise(testSet, testLabel)
