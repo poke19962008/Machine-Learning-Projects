@@ -73,6 +73,14 @@ def randomise(dataset, label):
     label = label[permut]
     return dataset, label
 
+def randomVisualiser(dataset, label):
+    for i in np.random.permutation(label.shape[0])[:10]:
+        plt.imshow(dataset[i])
+        print "Label: ", label[i]
+        
+        plt.show()
+
+
 if __name__ == '__main__':
     rootFolder = 'data'
 
@@ -82,3 +90,7 @@ if __name__ == '__main__':
     trainingSet, trainingLabel = randomise(trainingSet, trainingLabel)
     validSet, validLabel = randomise(validSet, validLabel)
     testSet, testLabel = randomise(testSet, testLabel)
+
+    randomVisualiser(trainingSet, trainingLabel)
+    randomVisualiser(validSet, validLabel)
+    randomVisualiser(trainingSet, trainingLabel)
