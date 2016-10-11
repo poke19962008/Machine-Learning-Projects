@@ -104,6 +104,7 @@ if __name__ == '__main__':
     trainingSet, trainingLabel = randomise(trainingSet, trainingLabel)
     validSet, validLabel = randomise(validSet, validLabel)
     testSet, testLabel = randomise(testSet, testLabel)
+    print "[SUCCESS] Randomised datsets"
 
     # randomVisualiser(trainingSet, trainingLabel)
     # randomVisualiser(validSet, validLabel)
