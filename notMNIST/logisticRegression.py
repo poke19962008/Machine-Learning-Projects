@@ -12,4 +12,8 @@ with open("bin/notMNIST.pkl", 'r') as f:
     del alphabTest
 
     logreg = LogisticRegression(C=1e5)
-    logreg.fit(X, Y)
+    classifier = logreg.fit(X, Y)
+
+    del X, Y
+    with open('bin/lrClssr.pkl', 'wb') as f:
+        pickle.dump(f, classifier)
