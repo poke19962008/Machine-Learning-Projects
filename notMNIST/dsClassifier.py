@@ -37,6 +37,7 @@ def mergeDatasets():
         with open("bin/letters/%s"%pkl, 'rb') as f:
             letterSet = pickle.load(f)
 
+            # TrainingSet: testSet: validSet = 4:1:1
             trainSize = int(letterSet.shape[0]*0.8)
             testSize = int(letterSet.shape[0]*0.2)
             validSize = int(trainSize*0.2)
