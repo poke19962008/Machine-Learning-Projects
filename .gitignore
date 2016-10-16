@@ -89,7 +89,11 @@ ENV/
 .ropeproject
 
 # Datasets
+# Music Year PRedeiction
 Music\ Year\ Prediction/YearPredictionMSD.txt
 Music\ Year\ Prediction/training.bin
 Music\ Year\ Prediction/test.bin
 Music\ Year\ Prediction/bin/*
+
+# Titanic
+Titanic/train.csv
