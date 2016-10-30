@@ -4,19 +4,19 @@ import numpy as np
 
 df = pd.read_csv('train.csv')
 
-def ageSurvivalFreq():
-    ageGroupS = df.groupby(['Survived']).get_group(1)
-    ageGroupS = ageGroupS.groupby(['Age'])['Age'].aggregate(len)
-    ageGroupS = pd.DataFrame({'Age': ageGroupS.index, 'Frequency': ageGroupS.values})
+def survivalFreq(X='Age'):
+    groupS = df.groupby(['Survived']).get_group(1)
+    groupS = groupS.groupby([X])[X].aggregate(len)
+    groupS = pd.DataFrame({X: groupS.index, 'Frequency': groupS.values})
 
-    ageGroupD = df.groupby(['Survived']).get_group(0)
-    ageGroupD = ageGroupD.groupby(['Age'])['Age'].aggregate(len)
-    ageGroupD = pd.DataFrame({'Age': ageGroupD.index, 'Frequency': ageGroupD.values})
+    groupD = df.groupby(['Survived']).get_group(0)
+    groupD = groupD.groupby([X])[X].aggregate(len)
+    groupD = pd.DataFrame({X: groupD.index, 'Frequency': groupD.values})
 
-    ageGroup = pd.merge(ageGroupD, ageGroupS, how='inner', on='Age', suffixes=('Dead', 'Survived'))
-    ageGroup[['FrequencyDead', 'FrequencySurvived']].plot.bar( title='Age And Survival Frequency', stacked=True, xticks=ageGroup['Age'])
+    group = pd.merge(groupD, groupS, how='inner', on=X, suffixes=('Dead', 'Survived'))
+    group[['FrequencyDead', 'FrequencySurvived']].plot.bar(x=group[X], title='%s And Survival Frequency'%X, stacked=True)
 
 if __name__ == '__main__':
-    ageSurvivalFreq()
+    survivalFreq('Sex')
 
     plt.show()
