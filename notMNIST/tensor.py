@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print "Unpacking Datasets.."
     with open('bin/notMNIST.pkl') as f:
         alphabTest = pickle.load(f)
-        print ="[SUCCESS] Unpacked Datasets."
+        print "[SUCCESS] Unpacked Datasets."
 
         X = alphabTest["trainingSet"]
         X = X[:len(X)].reshape(len(X), 28*28)[:trainSubset, :] # Image Dimension is 28*28
@@ -53,7 +53,6 @@ if __name__ == '__main__':
         accuracy = tf.reduce_mean(tf.cast(isCorrect, tf.float64))
 
         init = tf.initialize_all_variables()
-
 
         with tf.Session() as sess:
             sess.run(init)
