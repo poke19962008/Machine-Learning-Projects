@@ -35,9 +35,10 @@ def clean(type="train"):
     dfg['Sex'] = dfg['Sex'].replace(['male', 'female'], [0, 1])
     dfg['Embarked'] = dfg['Embarked'].replace(['C', 'Q', 'S'], [1, 2, 3])
 
-    X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare']})
+    # X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare']})
+    X = pd.DataFrame({'Age': df['Age'], 'Sex': df['Sex']})
 
-    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex'], 'Embarked': dfg['Embarked']})
+    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex']})
 
     X = X.as_matrix()
     Xg = Xg.as_matrix()
@@ -67,7 +68,7 @@ def clean(type="train"):
 
 def models(X,Xg,Xv,Xgv, Y,Yg,Yv, Ygv):
     clfs = {
-
+        'dt': [tree.DecisionTreeClassifier(), tree.DecisionTreeClassifier()],
         'lr': [LogisticRegression(), LogisticRegression()],
         'svm': [svm.SVC(), svm.SVC()]
     }
@@ -114,25 +115,25 @@ def fit():
 
     clf, clfg, _ = models(X,Xg,Xv,Xgv, Y,Yg,Yv, Ygv)
 
-    with open('dtcp.bin', 'wb') as f:
+    with open('clfp.bin', 'wb') as f:
         pickle.dump(clf, f)
 
-        print "[SUCCESS] Saved primary classifier to `dtcp.bin`"
+        print "[SUCCESS] Saved primary classifier to `clfp.bin`"
 
-    with open('dtcs.bin', 'wb') as f:
+    with open('clfs.bin', 'wb') as f:
         pickle.dump(clfg, f)
-        print "[SUCCESS] Saved secondary classifier to `dtcs.bin`"
+        print "[SUCCESS] Saved secondary classifier to `clfs.bin`"
     del clf, clfg, Xg, Yg, X, Y, Xv, Yv
 
 
 def predict():
     X, Xg, pid, pidg = clean('test')
 
-    with open('dtcp.bin', 'rb') as f:
+    with open('clfp.bin', 'rb') as f:
         clf = pickle.load(f)
         print "[SUCCESS] Loaded primary classifier"
 
-    with open('dtcs.bin', 'rb') as f:
+    with open('clfs.bin', 'rb') as f:
         clfg = pickle.load(f)
         print "[SUCCESS] Loaded primary classifier"
 
@@ -141,6 +142,9 @@ def predict():
 
     Hg = clfg.predict(Xg)
     print "[SUCCESS] End of secondary prediction"
+
+    pid = pid.append(pd.Series([1044]))
+    H = np.append(H, [1])
 
     df = pd.DataFrame({'PassengerId': pid, 'Survived': H})
     dfg = pd.DataFrame({'PassengerId': pidg, 'Survived': Hg})
