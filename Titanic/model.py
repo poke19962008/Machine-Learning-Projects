@@ -1,6 +1,7 @@
 from sklearn import tree
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
 import numpy as np
 import pandas as pd
@@ -35,10 +36,9 @@ def clean(type="train"):
     dfg['Sex'] = dfg['Sex'].replace(['male', 'female'], [0, 1])
     dfg['Embarked'] = dfg['Embarked'].replace(['C', 'Q', 'S'], [1, 2, 3])
 
-    # X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare']})
-    X = pd.DataFrame({'Age': df['Age'], 'Sex': df['Sex']})
+    X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare']})
 
-    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex']})
+    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex'], 'Embarked': dfg['Embarked']})
 
     X = X.as_matrix()
     Xg = Xg.as_matrix()
@@ -68,9 +68,9 @@ def clean(type="train"):
 
 def models(X,Xg,Xv,Xgv, Y,Yg,Yv, Ygv):
     clfs = {
-        'dt': [tree.DecisionTreeClassifier(), tree.DecisionTreeClassifier()],
+        'rf': [RandomForestClassifier(n_estimators=100), RandomForestClassifier(n_estimators=100)],
         'lr': [LogisticRegression(), LogisticRegression()],
-        'svm': [svm.SVC(), svm.SVC()]
+        'svm': [svm.SVC(kernel='rbf', gamma=3), svm.SVC(kernel='rbf', gamma=3)]
     }
 
     best = -1
