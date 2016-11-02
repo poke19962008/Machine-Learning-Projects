@@ -21,6 +21,6 @@ def survivalFreq(X='Age',diff=False):
         group[['diff']].plot.bar(x=group[X], title='%s And Survival Frequency'%X, stacked=True); plt.axhline(0, color='k')
 
 if __name__ == '__main__':
-    survivalFreq('Age',diff=True)
+    survivalFreq('Pclass', diff=False)
 
     plt.show()
