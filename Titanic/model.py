@@ -25,8 +25,14 @@ def clean(type="train"):
     else:
         df = pd.read_csv('test.csv')
 
+
+    # Normalise Columns
+    df.Age = (df.Age - df.Age.mean())/(df.Age.max() - df.Age.min())
+    df.Fare = (df.Fare - df.Fare.mean())/(df.Fare.max() - df.Fare.min())
+
+
+    # Remove all NaN values
     dfg = df[np.isnan(df.Age)]
-    # dfg = df[np.isnan(df.Fare)]
 
     df = df[np.isfinite(df.Age)]
     df = df[np.isfinite(df.Pclass)]
@@ -36,9 +42,9 @@ def clean(type="train"):
     dfg['Sex'] = dfg['Sex'].replace(['male', 'female'], [0, 1])
     dfg['Embarked'] = dfg['Embarked'].replace(['C', 'Q', 'S'], [1, 2, 3])
 
-    X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare']})
+    X = pd.DataFrame({'Pclass': df['Pclass'], 'Age': df['Age'], 'Sex': df['Sex'], 'Fare': df['Fare'], 'SibSp': df['SibSp']})
 
-    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex'], 'Embarked': dfg['Embarked']})
+    Xg = pd.DataFrame({'Pclass': dfg['Pclass'], 'Sex': dfg['Sex'], 'Embarked': dfg['Embarked'], 'SibSp': dfg['SibSp']})
 
     X = X.as_matrix()
     Xg = Xg.as_matrix()
@@ -68,7 +74,13 @@ def clean(type="train"):
 
 def models(X,Xg,Xv,Xgv, Y,Yg,Yv, Ygv):
     clfs = {
-        'rf': [RandomForestClassifier(n_estimators=100), RandomForestClassifier(n_estimators=100)],
+        'rf': [RandomForestClassifier(bootstrap=True,
+            criterion='entropy', max_depth=None, max_features=2,
+            max_leaf_nodes=16, min_samples_split=10, n_estimators=1000,
+            n_jobs=-1, oob_score=False), RandomForestClassifier(bootstrap=True,
+            criterion='entropy', max_depth=None, max_features=2,
+            max_leaf_nodes=16, min_samples_split=10, n_estimators=1000,
+            n_jobs=-1, oob_score=False)],
         'lr': [LogisticRegression(), LogisticRegression()],
         'svm': [svm.SVC(kernel='rbf', gamma=3), svm.SVC(kernel='rbf', gamma=3)]
     }
@@ -156,4 +168,4 @@ def predict():
 
 if __name__ == '__main__':
     fit()
-    predict()
+    # predict()
