@@ -71,7 +71,7 @@ def clean(type="train"):
         pid = df['PassengerId']
         pidg = dfg['PassengerId']
         return X, Xg, pid, pidg
-
+# Models
 def models(X,Xg,Xv,Xgv, Y,Yg,Yv, Ygv):
     clfs = {
         'rf': [RandomForestClassifier(bootstrap=True,
