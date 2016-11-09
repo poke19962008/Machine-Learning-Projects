@@ -15,7 +15,7 @@ Feature consist of frequency of RegEx (`reStore.py`) marker matches from the giv
 
 ## Probability Distribution of Markers of Languages
 
-!(Probability Distribution)[https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/markerProbabilty.png]
+![Probability Distribution](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/markerProbabilty.png)
 
 
 ## Result
