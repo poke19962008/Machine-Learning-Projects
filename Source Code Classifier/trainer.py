@@ -1,5 +1,6 @@
 from features import extract
 from reStore import markerList
+from sklearn.naive_bayes import GaussianNB
 import numpy as np
 import os, pickle
 
@@ -7,11 +8,32 @@ langs = ['py', 'java', 'rb', 'cpp', 'c']
 tRatio = 0.7 # Training/Validation ratio
 
 def train():
+    with open('./bin/train.bin', 'rb') as f:
+        ds = pickle.load(f)
+        XTrain, yTrain = ds['X'], ds['y']
+        del ds
+
+    with open('./bin/validation.bin', 'rb') as f:
+        ds = pickle.load(f)
+        XValidation, yValidation = ds['X'], ds['y']
+        del ds
+
+    clf = GaussianNB()
+    clf.fit(XTrain, yTrain)
+
+    print "Training Set Length:", XTrain.shape
+    print "Validation Set Length:", XValidation.shape
+    print "Validation Scores:", clf.score(XValidation, yValidation)
+
+    with open('./bin/gnbClf.bin', 'wb') as f:
+        pickle.dump(clf, f)
+        print "[SUCCESS] Saved classifier as `gnbClf.bin`"
+
+def getTrainDS():
     root = './data'
     X = np.mat([0]*(len(markerList)))
     y = np.array([])
 
-    # counter = 0
     for lang in langs:
         for scDir in os.listdir(os.path.join(root, lang)):
             sc = getSC(os.path.join(root, lang, scDir))
@@ -26,12 +48,6 @@ def train():
             print "[SUCCESS] Extracted", scDir
 
             del feature
-        #     counter += 1
-        #     if counter == 5:
-        #         break
-        # if counter == 5:
-        #     break
-
     X = X[1:]
 
     print "Shuffling datasets."
