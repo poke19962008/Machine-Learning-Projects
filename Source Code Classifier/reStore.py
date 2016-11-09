@@ -8,7 +8,7 @@ def compileRe(pattern, dotall=True):
 # tokenizer for source code
 tokenizer = compileRe(r'[\w\']+|[\"\"!\"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~\"\"\\]')
 
-# List of language based marers
+# List of language based markers
 markerList = [
     # PY markers
     compileRe(r'^(\s*from\s+[\.\w]+)?\s*import\s+[\*\.,\w]+(,\s*[\*\.,\w]+)*(\s+as\s+\w+)?$'),
