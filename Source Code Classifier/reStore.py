@@ -1,9 +1,15 @@
-
 import re
 def compileRe(pattern, dotall=True):
     flags = (re.MULTILINE | re.DOTALL) if dotall else re.MULTILINE
     return re.compile(pattern, flags)
 
+'''
+    py: 0-44
+    c: 45-54
+    cpp: 55-92
+    java: 93-107
+    rb: 108-115
+'''
 
 # tokenizer for source code
 tokenizer = compileRe(r'[\w\']+|[\"\"!\"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~\"\"\\]')

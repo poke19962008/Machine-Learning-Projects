@@ -95,4 +95,4 @@ def getSC(dir):
     with open(dir) as f:
         return f.read()
 if __name__ == '__main__':
-    train()
+    getTrainDS()
