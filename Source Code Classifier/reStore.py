@@ -5,6 +5,10 @@ def compileRe(pattern, dotall=True):
     return re.compile(pattern, flags)
 
 
+# tokenizer for source code
+tokenizer = compileRe(r'[\w\']+|[\"\"!\"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~\"\"\\]')
+
+# List of language based marers
 markerList = [
     # PY markers
     compileRe(r'^(\s*from\s+[\.\w]+)?\s*import\s+[\*\.,\w]+(,\s*[\*\.,\w]+)*(\s+as\s+\w+)?$'),
@@ -50,7 +54,7 @@ markerList = [
     compileRe(r'subprocess\.\w+'),
     compileRe(r'^\s*if\s+__name__\s*=\s*"__main__"\s*:$'),
     compileRe(r"^\s*if\s+__name__\s*=\s*'__main__'\s*:$"),
-    compileRe(r'self\.\w+(\.\w+)*\((.*?)\)')]
+    compileRe(r'self\.\w+(\.\w+)*\((.*?)\)'),
 
     # C marker.
     compileRe(r'^\s*#\s*include\s+("|<)[^">]+("|>)$'),
@@ -134,5 +138,5 @@ markerList = [
     compileRe(r'^\s*include\s+[\.\w+]+$'),
     compileRe(r'^\s*alias\s[\.\w]+\s+[\.\w]+(.*?)$'),
     compileRe(r'^\s*class\s+[\.\w+]+(\s*<\s*[\.\w]+(::[\.\w]+)*)?(.*?)$'),
-    compileRe(r'^\s*module\s+[\.\w+]+\s*[\.\w]+(::[\.\w]+)*(.*?)$'),
+    compileRe(r'^\s*module\s+[\.\w+]+\s*[\.\w]+(::[\.\w]+)*(.*?)$')
 ]
