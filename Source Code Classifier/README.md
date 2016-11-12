@@ -4,7 +4,7 @@ Naive Bayes approach for classifing programming language (i.e. python, java, C++
 
 ## Feature 
 
-Feature consist of frequency of RegEx (`reStore.py`) marker matches from the given source code. Markers are manually handpicked from various languages.
+Feature consist of frequency of RegEx (`reStore.py`) marker matches from the given source code. Markers are manually handpicked from various languages. Frequency of each markers from the source code is calculated.
 
 
 
@@ -21,7 +21,7 @@ Graph below shows the probability of the markers for a given programming languag
 ![Probability Distribution](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/markerProbabilty.png)
 
 
-To make everything more clear here is the Normalised Probility Distribution Functio for every programming language.
+To make everything more clear here is the Normalised Probility Distribution Function for every programming language.
 
 ![Probability Distribution](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/normDist.png)
 
