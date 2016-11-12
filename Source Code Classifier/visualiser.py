@@ -53,6 +53,9 @@ def featureMapHist(lang='py', normed=True):
         ax = fig.add_subplot(3, 2, langs.index(lang)+1)
         plt.plot(raw, pdf)
         ax.hist(raw, normed=True, alpha=0.75)
+
+        ax.ylabel('Probability')
+        ax.xlabel('Markers')
         ax.set_title(lang)
 
 def featureMapDensity(lang='py', normed=True):
@@ -74,6 +77,10 @@ def getDS():
         return ds['X'], ds['y']
 
 if __name__ == '__main__':
-    [featureMapDensity(x, normed=True) for x in langs]
+    [featureMapHist(x, normed=True) for x in langs]
+
+    plt.xlabel('Markers')
+    plt.ylabel('Probability')
+
     plt.legend()
     plt.show()
