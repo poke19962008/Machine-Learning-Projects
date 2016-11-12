@@ -8,7 +8,7 @@ Feature consist of frequency of RegEx (`reStore.py`) marker matches from the giv
 
 
 
-## Probability Distribution of Markers of Languages
+## Visualisation
 
 Graph below shows the probability of the markers for a given programming language during the training phase. Note that for every language the activation of markers consist of fixed range. Actual range of markers are show below:
 
@@ -21,9 +21,19 @@ Graph below shows the probability of the markers for a given programming languag
 ![Probability Distribution](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/markerProbabilty.png)
 
 
+### Normalised Distribution
+
 To make everything more clear here is the Normalised Probility Distribution Function for every programming language.
 
 ![Probability Distribution](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/normDist.png)
+
+### Gaussian Kernel Density Estimation
+
+To show the resemblence of the syntax of each languages I have calculated the Gaussian Kernel Density Distribution. And the bandwidth of the estimator is set to `0.5`.
+
+![Gaussian KDE](https://raw.githubusercontent.com/poke19962008/Machine-Learning-Projects/master/Source%20Code%20Classifier/plot/gkde_0_5.png)
+
+Clearly the above plot shows the drastic resemblence of C++ and C. Ruby shares some of the syntax with python. Same goes with Java and C++.
 
 
 ## Result
