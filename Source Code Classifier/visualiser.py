@@ -1,7 +1,7 @@
 from __future__ import division
 import matplotlib.pyplot as plt
 from reStore import  markerList
-from scipy.stats import norm
+from scipy.stats import norm, gaussian_kde
 import numpy as np
 import pickle, re
 
@@ -55,12 +55,25 @@ def featureMapHist(lang='py', normed=True):
         ax.hist(raw, normed=True, alpha=0.75)
         ax.set_title(lang)
 
+def featureMapDensity(lang='py', normed=True):
+    freq = getValue(lang, type='freq')
+    raw = np.array([])
+
+    for i in xrange(len(freq)):
+        raw = np.append(raw, [i]*freq[i])
+    print "[SUCCESS] Calculated raw for", lang
+
+    gaussKDE = gaussian_kde(raw, bw_method=0.5)
+    ind = np.linspace(1, 115, 200)
+
+    plt.plot(ind, gaussKDE(ind), label="%s"%lang)
+
 def getDS():
     with open('./bin/train.bin', 'rb') as f:
         ds = pickle.load(f)
         return ds['X'], ds['y']
 
 if __name__ == '__main__':
-    [featureMapHist(x, normed=True) for x in langs]
+    [featureMapDensity(x, normed=True) for x in langs]
     plt.legend()
     plt.show()
