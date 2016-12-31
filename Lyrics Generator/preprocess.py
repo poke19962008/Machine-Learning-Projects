@@ -1,6 +1,7 @@
-import os, re
+import os, re, pickle
 from nltk.tokenize import word_tokenize
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
 def clean(d):
     d = re.sub(r'\[[0-9]x\]', "", d)
@@ -8,7 +9,6 @@ def clean(d):
     return d
 
 if __name__ == '__main__':
-    print clean("Reaper [4x]")
     root = "./dump"
     tokens = np.array([])
 
@@ -22,4 +22,9 @@ if __name__ == '__main__':
         print "Token vector size: ", tokens.size
 
 
-    # One Hot Encoder
+    # Token Encoder
+    le = LabelEncoder()
+    le.fit(tokens)
+    with open('encoder.bin', 'wb') as f:
+        pickle.dump(le, f)
+        print "Pickled Encoed as `encoder.bin`"
