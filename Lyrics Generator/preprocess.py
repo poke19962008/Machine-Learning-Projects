@@ -11,12 +11,15 @@ def clean(d):
 if __name__ == '__main__':
     root = "./dump"
     tokens = np.array([])
+    maxLen = -1
 
     # Extract and clean files
     for fdir in os.listdir(root):
         with open(os.path.join(root, fdir), 'r') as f:
             l = clean(f.read())
+
             ftoken = word_tokenize(l)
+            maxLen = max(len(ftoken), maxLen)
             tokens = np.append(tokens, ftoken)
             print "Parsed ", fdir
         print "Token vector size: ", tokens.size
@@ -25,6 +28,7 @@ if __name__ == '__main__':
     # Token Encoder
     le = LabelEncoder()
     le.fit(tokens)
+    print "max(Words/song):", maxLen
     with open('encoder.bin', 'wb') as f:
         pickle.dump(le, f)
-        print "Pickled Encoed as `encoder.bin`"
+        print "Pickled Encoded as `encoder.bin`"
