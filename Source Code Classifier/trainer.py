@@ -22,8 +22,8 @@ def train():
     clf.fit(XTrain, yTrain)
 
     print "Training Set Length:", XTrain.shape
-    print "Validation Set Length:", XValidation.shape
-    print "Validation Scores:", clf.score(XValidation, yValidation)
+    print "Test Set Length:", XValidation.shape
+    print "Test Scores:", clf.score(XValidation, yValidation)
 
     with open('./bin/gnbClf.bin', 'wb') as f:
         pickle.dump(clf, f)
@@ -94,5 +94,7 @@ def shuffle(X, y):
 def getSC(dir):
     with open(dir) as f:
         return f.read()
+
 if __name__ == '__main__':
+    # getTrainDS()
     train()
